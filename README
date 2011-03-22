@@ -1,0 +1,25 @@
+WHAT IS IT?
+===========
+
+pyrobase assembles general Python helper functions and classes that 
+can be applied to any project.
+
+See https://github.com/pyroscope/pyrobase/wiki for more.
+
+
+INSTALLATION
+============
+
+Install it with "easy_install pyrobase", or more commonly just add 
+it as a dependency to your project and call "setup.py develop -U".
+
+
+USAGE
+=====
+
+
+ACKNOWLEDGEMENTS
+================
+
+Repository hosting @ github.
+

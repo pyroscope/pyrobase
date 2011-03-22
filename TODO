@@ -1,0 +1,5 @@
+- add paver tasks
+- base classes for scripts
+- move most stuff from pyrocore.util
+- logging helpers
+
