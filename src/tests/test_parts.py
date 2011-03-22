@@ -1,4 +1,4 @@
-""" PyroBase - Common Paver Tasks.
+""" PyroBase - Data Types tests.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
 
@@ -16,3 +16,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
+import logging
+import unittest
+
+from pyrobase import parts
+
+log = logging.getLogger(__name__)
+log.trace("module loaded")
+
+
+class TypesTest(unittest.TestCase):
+
+    def test_parts(self):
+        pass
+
+
+if __name__ == "__main__":
+    unittest.main()
