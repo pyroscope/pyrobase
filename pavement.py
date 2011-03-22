@@ -57,6 +57,11 @@ project = dict(
     install_requires = [
     ],
     setup_requires = [
+        "Paver>=1.0", 
+        "nose>=1.0", 
+        "coverage>=3.4", 
+        "epydoc>=3.0", 
+        "pylint>=0.22", 
     ],
 
     # tests
