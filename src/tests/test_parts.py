@@ -27,9 +27,28 @@ log.trace("module loaded")
 
 class TypesTest(unittest.TestCase):
 
-    def test_parts(self):
-        pass
+    def test_janus(self):
+        b = parts.Bunch()
+        b.a = 1
+        b["z"] = 2
+        assert b["a"] == 1
+        assert b.z == 2
 
+    def test_repr(self):
+        b = repr(parts.Bunch(a=1, z=2))
+        assert b.startswith("Bunch(")
+        assert "a=" in b
+        assert b.index("a=") < b.index("z=")
+
+    def test_exc(self):
+        b = parts.Bunch()
+        try:
+            b.not_there
+        except AttributeError, exc:
+            assert "not_there" in str(exc)
+        else:
+            assert False, "Expected an exception"
+        
 
 if __name__ == "__main__":
     unittest.main()
