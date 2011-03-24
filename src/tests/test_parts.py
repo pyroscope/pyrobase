@@ -25,7 +25,7 @@ log = logging.getLogger(__name__)
 log.trace("module loaded")
 
 
-class TypesTest(unittest.TestCase):
+class BunchTest(unittest.TestCase):
 
     def test_janus(self):
         b = parts.Bunch()
