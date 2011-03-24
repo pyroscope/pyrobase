@@ -1,0 +1,7 @@
+.coverage
+.project
+.pydevproject
+.settings
+build
+src/*.egg-info
+
