@@ -69,11 +69,11 @@ def iso_datetime_optional(timestamp):
 def human_duration(time1, time2=None, precision=0, short=False):
     """ Return a human-readable representation of a time delta.
     
-        @param time1: 
-        @param time2: (C{None} for now).
-        @param precision: 
-        @param short:
-        @return: Formatted duration of length ???. 
+        @param time1: Relative time value.
+        @param time2: Time base (C{None} for now; 0 for a duration in C{time1}).
+        @param precision: How many time units to return (0 = all).
+        @param short: Use abbreviations, and right-justify the result to always the same length. 
+        @return: Formatted duration. 
     """
     if time2 is None:
         time2 = time.time()
@@ -118,7 +118,8 @@ def human_duration(time1, time2=None, precision=0, short=False):
 
 
 def to_unicode(text):
-    """ Return a decoded unicode string.
+    """ Return a decoded unicode string. 
+        False values are returned untouched.
     """ 
     if not text or isinstance(text, unicode):
         return text
@@ -148,6 +149,8 @@ def to_utf8(text):
     except UnicodeDecodeError:
         try:
             # Is it a utf8 byte string?
+            if text.startswith(codecs.BOM_UTF8):
+                text = text[len(codecs.BOM_UTF8):]
             return text.decode("utf8").encode("utf8")
         except UnicodeDecodeError:
             # Check BOM

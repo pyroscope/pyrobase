@@ -16,6 +16,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
+import time
 import logging
 import unittest
 
@@ -58,8 +59,27 @@ class FmtTest(unittest.TestCase):
         assert all(i == "never" for i in result)
     
     def test_human_duration(self):
+        now = time.time()
         cases = [
+            ((now,now),     " from now"), # TODO: XXX "right now"
+            ((now+1,now),   "1 sec from now"),
+            ((now,now+1),   "1 sec ago"),
+            (("",),         "never"),
+            ((None,),       "never"),
             ((0,),          "never"),
+            ((0,0),         "N/A"),
+            ((59,0,0,True), "  59s"),
+            ((60,0,0,True),         "   1m"),
+            ((3600,0,0,True),       "   1h"),
+            ((3601,0,0,True),       "   1h  1s"),
+            ((3660,0,0,True),       "   1h  1m"),
+            ((3666,0,0,True),       "   1h  1m  6s"),
+            ((3666,0,1,True),       "   1h"),
+            ((3666,0,2,True),       "   1h  1m"),
+            ((3666,0,3,True),       "   1h  1m  6s"),
+            ((3666,0,4,True),       "       1h  1m  6s"),
+            ((86400,0,0,True),      "   1d"),
+            # TODO: lots more
             #(, ""),
         ]
         for val, expected in cases:
@@ -67,13 +87,55 @@ class FmtTest(unittest.TestCase):
             assert result == expected
     
     def test_to_unicode(self):
-        pass
+        cases = [
+            ("", ""),
+            (u"", u""),
+            (False, False),
+            (None, None),
+            ("\xc3\xaa", u"\xea"),
+            ("\x80", u"\u20ac"),
+            ("\x81", "\x81"),
+            ("\x8d", "\x8d"),
+            ("\x8f", "\x8f"),
+            ("\x90", "\x90"),
+            ("\x9d", "\x9d"),
+        ]
+        for val, expected in cases:
+            result = fmt.to_unicode(val)
+            assert result == expected
     
     def test_to_utf8(self):
-        pass
+        cases = [
+            ("", ""),
+            (u"", u""),
+            (False, False),
+            (None, None),
+            (u"\xea", "\xc3\xaa",),
+            (u"\u20ac", "\xe2\x82\xac"),
+            ("\xc3\xaa", "\xc3\xaa"),
+            ("\xfe\xff\x00\x20", u" "),
+            ("\xff\xfe\x20\x00", u" "),
+            ("\xef\xbb\xbf\x20", u" "),
+            ("\xc3\xc3\x81", "\xc3\xc3\x81"),
+        ]
+        for val, expected in cases:
+            result = fmt.to_utf8(val)
+            assert result == expected
     
     def test_to_console(self):
-        pass
+        cases = [
+            ("", ""),
+            (u"", ""),
+            (u"\xea", "\xc3\xaa",),
+            (u"\u20ac", "\xe2\x82\xac"),
+            ("\xc3\xaa", "\xc3\xaa"),
+            ("\xfe\xff\x00\x20", "\xfe\xff\x00\x20"),
+            ("\xef\xbb\xbf\x20", "\xef\xbb\xbf\x20"),
+            ("\xc3\xc3\x81", "\xc3\xc3\x81"),
+        ]
+        for val, expected in cases:
+            result = fmt.to_console(val)
+            assert result == expected
     
 
 if __name__ == "__main__":
