@@ -29,10 +29,9 @@ from setuptools import find_packages
 from paver.easy import *
 from paver.setuputils import setup
 
-# Bootstrap needed in the base project to find our own tasks
+# Bootstrap our own tasks, projects using us don't need this!
 if os.path.abspath("src") not in sys.path:
     sys.path.insert(0, os.path.abspath("src"))
-from pyrobase.paver.support import toplevel_packages
 from pyrobase.paver.easy import *
 
 
@@ -66,8 +65,6 @@ project = dict(
         "Paver>=1.0", 
         #"nose>=1.0", 
         #"coverage>=3.4", 
-        #"epydoc>=3.0", 
-        #"pylint>=0.22", 
     ],
 
     # tests
@@ -106,55 +103,6 @@ project = dict(
 def bootstrap():
     """ Initialize project.
     """
-
-
-@task
-@cmdopts([
-    ('docs-dir=', 'd', 'directory to put the api documentation in'),
-    ('excludes=', 'x', 'list of packages to exclude'),
-])
-def docs():
-    """ Create documentation.
-    """
-    from epydoc import cli
-
-    path('build').exists() or path('build').makedirs()
-
-    # get storage path
-    docs_dir = options.docs.get('docs_dir', 'docs/apidocs')
-
-    # clean up previous docs
-    (path(docs_dir) / "epydoc.css").exists() and path(docs_dir).rmtree()
-
-    # set up excludes
-    try:
-        exclude_names = options.docs.excludes
-    except AttributeError:
-        exclude_names = []
-    else:
-        exclude_names = exclude_names.replace(',', ' ').split()
-
-    excludes = []
-    for pkg in exclude_names:
-        excludes.append("--exclude")
-        excludes.append('^' + re.escape(pkg))
-
-    # call epydoc in-process
-    sys_argv = sys.argv
-    try:
-        sys.argv = [
-            sys.argv[0] + "::epydoc",
-            "-v",
-            "--inheritance", "listed",
-            "--output", docs_dir,
-            "--name", "%s %s" % (options.setup.name, options.setup.version),
-            "--url", options.setup.url,
-            "--graph", "umlclasstree",
-        ] + excludes + toplevel_packages()
-        sys.stderr.write("Running '%s'\n" % ("' '".join(sys.argv)))
-        cli.cli()
-    finally:
-        sys.argv = sys_argv
 
 
 @task
@@ -202,18 +150,16 @@ def coverage():
 def functest():
     """ Functional test of the command line tools.
     """
-    def venv_sh(cmd):
-        "Execute a command from the virtualenv in the curren tdirectory."
-        sh((".\\Scripts\\" if sys.platform == "win32" else "./bin/") + cmd)
+    from pyrobase.paver.support import vsh
 
     venv = path("build/venv")
     venv.exists() and venv.rmtree()
     sh("git clone --local '%s' '%s'" % (os.getcwd(), venv))
     with pushd(venv) as basedir:
-        sh("virtualenv --no-site-packages .")
-        venv_sh("easy_install -q -U setuptools")
-        venv_sh("easy_install -q paver")
-        venv_sh("paver bootstrap")
+        sh("virtualenv", "--no-site-packages", ".")
+        vsh("easy_install", "-q", "-U", "setuptools")
+        vsh("easy_install", "-q", "paver")
+        vsh("paver", "bootstrap")
 
 
 #

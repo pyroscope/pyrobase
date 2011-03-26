@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=W0401,W0614
+# pylint: disable=W0106
 """ PyroBase - Paver Code Quality Tasks.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
@@ -21,17 +21,19 @@
 from __future__ import with_statement
 
 import os
+import sys
 
-from paver.easy import * #@UnusedWildImport
+from paver import easy
 from pyrobase.paver import support
 
 
-@task
-@cmdopts([
+@easy.task
+@easy.cmdopts([
     ('output=', 'o', 'Create report file (.html, .log, or .txt) [stdout]'),
     ('rcfile=', 'r', 'Configuration file [./pylint.cfg]'),
     ('msg-only', 'm', 'Only generate messages (no reports)'),
 ])
+@support.task_requires("pylint>=0.23")
 def lint():
     """ Report pylint results.
     """
@@ -44,16 +46,16 @@ def lint():
         ".txt": linter.TextReporter,
     }
 
-    lint_build_dir = path("build/lint")
+    lint_build_dir = easy.path("build/lint")
     lint_build_dir.exists() or lint_build_dir.makedirs()
 
     argv = []
-    rcfile = options.lint.get("rcfile")
-    if not rcfile and path("pylint.cfg").exists():
+    rcfile = easy.options.lint.get("rcfile")
+    if not rcfile and easy.path("pylint.cfg").exists():
         rcfile = "pylint.cfg" 
     if rcfile:
         argv += ["--rcfile", os.path.abspath(rcfile)]
-    if options.lint.get("msg_only", False):
+    if easy.options.lint.get("msg_only", False):
         argv += ["-rn"]
     argv += [
         "--import-graph", (lint_build_dir / "imports.dot").abspath(),
@@ -61,14 +63,14 @@ def lint():
     argv += support.toplevel_packages()
 
     sys.stderr.write("Running %s::pylint '%s'\n" % (sys.argv[0], "' '".join(argv)))
-    outfile = options.lint.get("output", None)
+    outfile = easy.options.lint.get("output", None)
     if outfile:
         outfile = os.path.abspath(outfile)
 
     try:
-        with pushd("src" if path("src").exists() else "."):
+        with easy.pushd("src" if easy.path("src").exists() else "."):
             if outfile:
-                reporter_class = reporters.get(path(outfile).ext, linter.TextReporter)
+                reporter_class = reporters.get(easy.path(outfile).ext, linter.TextReporter)
                 sys.stderr.write("Writing output to %r\n" % (str(outfile),))
                 linter.Run(argv, reporter=reporter_class(open(outfile, "w")))
             else:

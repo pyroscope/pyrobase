@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=W0611
-""" PyroBase - Paver Easy Task Import.
+""" PyroBase - Helpers for iterables and collections.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
 
@@ -18,13 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
-# Add a project's "src" to the path, if it exists and isn't there yet
-import os, sys
-if os.path.abspath("src") not in sys.path:
-    sys.path.insert(0, os.path.abspath("src"))
-del os, sys
 
-# Import public symbols
-from pyrobase.paver.quality import lint #@UnusedImport
-from pyrobase.paver.documentation import docs #@UnusedImport
-from pyrobase.paver.support import task_requires as requires #@UnusedImport
+def flatten(nested, containers=(list, tuple)):
+    """ Flatten a nested list by yielding its scalar items.
+    """
+    for item in nested:
+        if hasattr(item, "next") or isinstance(item, containers):
+            for subitem in flatten(item):
+                yield subitem
+        else:
+            yield item
