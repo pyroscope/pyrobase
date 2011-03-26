@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ PyroBase - Generic Objects.
 
     Copyright (c) 2009, 2010, 2011 The PyroScope Project <pyroscope.project@gmail.com>
