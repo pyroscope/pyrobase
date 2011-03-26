@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
+from __future__ import with_statement
+
 import os
 import re
 import sys
@@ -62,10 +64,10 @@ project = dict(
     ],
     setup_requires = [
         "Paver>=1.0", 
-        "nose>=1.0", 
-        "coverage>=3.4", 
-        "epydoc>=3.0", 
-        "pylint>=0.22", 
+        #"nose>=1.0", 
+        #"coverage>=3.4", 
+        #"epydoc>=3.0", 
+        #"pylint>=0.22", 
     ],
 
     # tests
@@ -200,7 +202,18 @@ def coverage():
 def functest():
     """ Functional test of the command line tools.
     """
-    sh("echo nothing at the moment")
+    def venv_sh(cmd):
+        "Execute a command from the virtualenv in the curren tdirectory."
+        sh((".\\Scripts\\" if sys.platform == "win32" else "./bin/") + cmd)
+
+    venv = path("build/venv")
+    venv.exists() and venv.rmtree()
+    sh("git clone --local '%s' '%s'" % (os.getcwd(), venv))
+    with pushd(venv) as basedir:
+        sh("virtualenv --no-site-packages .")
+        venv_sh("easy_install -q -U setuptools")
+        venv_sh("easy_install -q paver")
+        venv_sh("paver bootstrap")
 
 
 #
