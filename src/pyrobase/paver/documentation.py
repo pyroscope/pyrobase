@@ -18,6 +18,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
+import os
 import re
 import sys
 
@@ -65,7 +66,7 @@ def docs():
             sys.argv[0] + "::epydoc",
             "-v",
             "--inheritance", "listed",
-            "--output", docs_dir,
+            "--output", os.path.abspath(docs_dir),
             "--name", "%s %s" % (easy.options.setup.name, easy.options.setup.version),
             "--url", easy.options.setup.url,
             "--graph", "umlclasstree",
