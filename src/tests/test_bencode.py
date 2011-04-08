@@ -18,12 +18,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
+from __future__ import with_statement
 
 import logging
 import unittest
-
-from pyrobase.bencode import * #@UnusedWildImport
 import StringIO
+
+from pyrobase.testing import mockedopen
+from pyrobase.bencode import * #@UnusedWildImport
 
 log = logging.getLogger(__name__)
 log.trace("module loaded")
@@ -90,8 +92,12 @@ class DecoderTest(unittest.TestCase):
     def test_encoding(self):
         self.failUnlessEqual(bdecode("l1:\x801:\x81e", "cp1252"), [u"\u20ac", "\x81"])
 
-    def test_bread(self):
+    def test_bread_stream(self):
         self.failUnlessEqual(bread(StringIO.StringIO("de")), {})
+
+    def test_bread_file(self):
+        with mockedopen({"empty_dict": "de"}):
+            self.failUnlessEqual(bread("empty_dict"), {})
 
 
 class EncoderTest(unittest.TestCase):
@@ -116,10 +122,15 @@ class EncoderTest(unittest.TestCase):
         for obj, result in testcases:
             self.failUnlessEqual(bencode(obj), result)
 
-    def test_bwrite(self):
+    def test_bwrite_stream(self):
         data = StringIO.StringIO()
         bwrite(data, {})
         self.failUnlessEqual(data.getvalue(), "de")
+
+    def test_bwrite_file(self):
+        with mockedopen() as files:
+            bwrite("data", {})
+            self.failUnlessEqual(files["data"], "de")
 
 
 if __name__ == "__main__":
