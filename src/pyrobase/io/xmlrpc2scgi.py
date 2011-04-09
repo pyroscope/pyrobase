@@ -30,32 +30,30 @@ import xmlrpclib
 # See spec at http://python.ca/scgi/protocol.txt
 #
 def _encode_netstring(text):
-    "Encode text as netstring"
+    "Encode text as netstring."
     return "%d:%s," % (len(text), text)
 
 
 def _encode_headers(headers):
-    "Make SCGI from headers (list of tuples)"
-    return '\x00'.join(['%s\x00%s' % i for i in headers]) + '\x00'
+    "Make SCGI header bytes from list of tuples."
+    return ''.join(['%s\0%s\0' % i for i in headers])
 
 
 def _encode_payload(data, headers=None):
-    "Wrap data in an scgi request"
-    headers = _encode_headers([
-        ("CONTENT_LENGTH", str(len(data))),
-        ("SCGI", "1"),
-    ] + (headers or []))
+    "Wrap data in an SCGI request."
+    prolog = "CONTENT_LENGTH\0%d\0SCGI\x001\0" % len(data)
+    if headers:
+        prolog += _encode_headers(headers)
     
-    return _encode_netstring(headers) + data
+    return _encode_netstring(prolog) + data
 
 
 def _parse_headers(headers):
-    """ Get header (key, value) pairs from header string.
-    """
-    return [line.rstrip().split(": ", 1)
+    "Get headers dict from header string."
+    return dict(line.rstrip().split(": ", 1)
         for line in headers.splitlines()
         if line
-    ]
+    )
 
 
 def _parse_response(resp):
@@ -63,7 +61,14 @@ def _parse_response(resp):
     """
     # Assume they care for standards and send us CRLF (not just LF)
     headers, payload = resp.split("\r\n\r\n", 1)
-    return payload, _parse_headers(headers)
+    headers = _parse_headers(headers)
+
+    clen = headers.get("Content-Length")
+    if clen is not None:
+        # Check length, just in case the transport is bogus
+        assert len(payload) == int(clen) 
+    
+    return payload, headers
 
 
 #

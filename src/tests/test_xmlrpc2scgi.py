@@ -40,7 +40,7 @@ class SCGIHelperTest(unittest.TestCase):
 
     def test_encode_headers(self):
         testcases = (
-            ((), "\0"),
+            ((), ""),
             ((("a", "b"),), "a\0b\0"),
         )
         for data, result in testcases:
@@ -56,17 +56,17 @@ class SCGIHelperTest(unittest.TestCase):
 
     def test_parse_headers(self):
         testcases = (
-            ("", []),
-            ("a: b\nc: d\n\n", [["a", "b"], ["c", "d"]]),
+            ("", {}),
+            ("a: b\nc: d\n\n", dict(a="b", c="d")),
         )
         for data, result in testcases:
             self.failUnlessEqual(xmlrpc2scgi._parse_headers(data), result)
 
     def test_parse_response(self):
-        data = "CONTENT_LENGTH: 10\r\nSCGI: 1\r\n\r\n" + "*"*10
+        data = "Content-Length: 10\r\n\r\n" + "*"*10
         payload, headers = xmlrpc2scgi._parse_response(data)
         self.failUnlessEqual(payload, "*"*10)
-        self.failUnlessEqual(headers, [["CONTENT_LENGTH", "10"], ["SCGI", "1"]])
+        self.failUnlessEqual(headers, {"Content-Length": "10"})
 
 
 if __name__ == "__main__":
