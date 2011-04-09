@@ -19,16 +19,104 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
+import os
 import time
 import socket
-import urllib
+import urllib2
 import urlparse
 import xmlrpclib
+
+# Types of exceptions thrown
+ERRORS = (urllib2.URLError, xmlrpclib.Fault, socket.error)
+
+
+#
+# SCGI transports
+#
+
+class LocalTransport(object):
+    """ Transport via TCP or a UNIX domain socket.
+    """
+
+    # Amount of bytes to read at once
+    CHUNK_SIZE = 32768
+
+    
+    def __init__(self, url):
+        self.url = url
+        
+        if url.netloc:
+            # TCP socket
+            addrinfo = list(set(socket.getaddrinfo(url.hostname, url.port, socket.AF_INET, socket.SOCK_STREAM)))
+            if len(addrinfo) != 1:
+                raise urllib2.URLError("Host of URL %r resolves to multiple addresses" % url.geturl())
+
+            self.sock = socket.socket(*addrinfo[0][:3])
+            self.sock_addr = addrinfo[0][4] 
+        else:
+            # UNIX domain socket
+            path = url.path
+            if path.startswith("/~"):
+                path = os.path.expanduser(path)
+            self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            self.sock_addr = os.path.abspath(path) 
+
+
+    def send(self, data):
+        """ Open transport, send data, and yield response chunks.
+        """
+        try:
+            self.sock.connect(self.sock_addr)
+        except socket.error, exc:
+            raise socket.error("Can't connect to %r (%s)" % (self.url.geturl(), exc))
+        
+        try:
+            # Send request        
+            self.sock.send(data)
+
+            # Read response
+            while True:
+                chunk = self.sock.recv(self.CHUNK_SIZE)
+                if chunk:
+                    yield chunk
+                else:
+                    break
+        finally:
+            # Clean up
+            self.sock.close()
+
+
+TRANSPORTS = {
+    "scgi": LocalTransport,
+    #"scgi+ssh": ,
+}
+
+# Register our schemes to be parsed as having a netloc
+urlparse.uses_netloc.extend(TRANSPORTS.keys())
+
+
+def transport_from_url(url):
+    """ Create a transport for the given URL.
+    """
+    url = urlparse.urlsplit(url, "scgi", allow_fragments=False)
+
+    try:
+        transport = TRANSPORTS[url.scheme.lower()]
+    except KeyError:
+        if not any((url.netloc, url.query)) and url.path.isdigit():
+            # Support simplified "domain:port" URLs
+            return transport_from_url("scgi://%s:%s" % (url.scheme, url.path))
+        else:
+            raise urllib2.URLError("Unsupported scheme in URL %r" % url.geturl())
+    else:
+        return transport(url)
+
 
 #
 # Helpers to handle SCGI data
 # See spec at http://python.ca/scgi/protocol.txt
 #
+
 def _encode_netstring(text):
     "Encode text as netstring."
     return "%d:%s," % (len(text), text)
@@ -85,68 +173,26 @@ class SCGIRequest(object):
         SCGIRequest('scgi:///tmp/rtorrent.sock').send(data)
     """
 
-    # Amount of bytes to read at once
-    CHUNK_SIZE = 32768
-
-    
-    def __init__(self, url):
-        self.url = url
-        self.resp_headers = []
-        self.latency = 0.0
-
-    
-    def __send(self, scgireq):
-        # Parse endpoint URL
-        _, netloc, path, _, _ = urlparse.urlsplit(self.url)
-        host, port = urllib.splitport(netloc)
-        #~ print '>>>', (netloc, host, port)
-
-        # Connect to the specified endpoint
-        start = time.time()
-        if netloc:
-            addrinfo = list(set(socket.getaddrinfo(host, port, socket.AF_INET, socket.SOCK_STREAM)))
-            
-            assert len(addrinfo) == 1, "There's more than one? %r"%addrinfo
-            #~ print addrinfo
-            
-            sock = socket.socket(*addrinfo[0][:3])
-            sock.connect(addrinfo[0][4])
-        else:
-            # If no host then assume unix domain socket
-            sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            try:
-                sock.connect(path)
-            except socket.error, exc:
-                raise socket.error("Can't connect to %r (%s)" % (path, exc))
-
+    def __init__(self, url_or_transport):
         try:
-            # Send request        
-            sock.send(scgireq)
+            self.transport = transport_from_url(url_or_transport + "")
+        except TypeError: 
+            self.transport = url_or_transport
 
-            # Read response
-            resp = []
-            while True:
-                chunk = sock.recv(self.CHUNK_SIZE)
-                if chunk:
-                    resp.append(chunk)
-                else:
-                    break
-        finally:
-            # Clean up
-            sock.close()
-            self.latency = time.time() - start
-        
-        # Return result
-        # (note that this returns resp unchanged for lists of length 1 in CPython)
-        return ''.join(resp)
+        self.resp_headers = {}
+        self.latency = 0.0
 
     
     def send(self, data):
         """ Send data over scgi to URL and get response.
         """
-        scgi_resp = self.__send(_encode_payload(data))
-        resp, self.resp_headers = _parse_response(scgi_resp)
+        start = time.time()
+        try:
+            scgi_resp = ''.join(self.transport.send(_encode_payload(data)))
+        finally:
+            self.latency = time.time() - start
 
+        resp, self.resp_headers = _parse_response(scgi_resp)
         return resp
 
 
@@ -172,10 +218,3 @@ def scgi_request(url, methodname, deserialize=False, *params):
     else:
         # Return raw XML
         return xmlresp
-
-
-# Types of exceptions thrown
-ERRORS = (xmlrpclib.Fault, socket.error)
-
-# Register our schemes to be parsed as having a netloc
-urlparse.uses_netloc.append("scgi")
