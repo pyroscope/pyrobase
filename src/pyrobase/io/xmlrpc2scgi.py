@@ -21,10 +21,12 @@
 """
 import os
 import time
+import pipes
 import socket
 import urllib2
 import urlparse
 import xmlrpclib
+import subprocess
 
 # Types of exceptions thrown
 ERRORS = (urllib2.URLError, xmlrpclib.Fault, socket.error)
@@ -51,44 +53,104 @@ class LocalTransport(object):
             if len(addrinfo) != 1:
                 raise urllib2.URLError("Host of URL %r resolves to multiple addresses" % url.geturl())
 
-            self.sock = socket.socket(*addrinfo[0][:3])
+            self.sock_args = addrinfo[0][:3]
             self.sock_addr = addrinfo[0][4] 
         else:
             # UNIX domain socket
             path = url.path
             if path.startswith("/~"):
                 path = os.path.expanduser(path)
-            self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            self.sock_args = (socket.AF_UNIX, socket.SOCK_STREAM)
             self.sock_addr = os.path.abspath(path) 
 
 
     def send(self, data):
         """ Open transport, send data, and yield response chunks.
         """
+        sock = socket.socket(*self.sock_args)
         try:
-            self.sock.connect(self.sock_addr)
+            sock.connect(self.sock_addr)
         except socket.error, exc:
             raise socket.error("Can't connect to %r (%s)" % (self.url.geturl(), exc))
         
         try:
             # Send request        
-            self.sock.send(data)
+            sock.send(data)
 
             # Read response
             while True:
-                chunk = self.sock.recv(self.CHUNK_SIZE)
+                chunk = sock.recv(self.CHUNK_SIZE)
                 if chunk:
                     yield chunk
                 else:
                     break
         finally:
             # Clean up
-            self.sock.close()
+            sock.close()
 
+
+class SSHTransport(object):
+    """ Transport via SSH to a UNIX domain socket.
+    """
+    
+    def __init__(self, url):
+        self.url = url
+        self.cmd = ['ssh', '-T'] # no pseudo-tty
+
+        if not url.path.startswith('/'):
+            raise urllib2.URLError("Bad path in URL %r" % url.geturl())
+
+        # pipes.quote is used because ssh always goes through a login shell.
+        # The only exception is for redirecting ports, which can't be used
+        # to access a domain socket.
+        if url.path.startswith("/~/"):
+            clean_path = "~/" + pipes.quote(url.path[3:])
+        else:
+            clean_path = pipes.quote(url.path)
+
+        ssh_netloc = ''.join((url.username or '', '@' if url.username else '', url.hostname))
+        if url.port:
+            reconstructed_netloc = '%s:%d' % (ssh_netloc, url.port)
+            self.cmd.extend(["-p", str(url.port)])
+        else:
+            reconstructed_netloc = ssh_netloc
+        if reconstructed_netloc != url.netloc:
+            raise urllib2.URLError("Bad location in URL %r (expected %r)" % (url.geturl(), reconstructed_netloc))
+
+        self.cmd.extend(["--", ssh_netloc])
+        #self.cmd.extend(["/bin/nc", "-U", "--", clean_path])
+        self.cmd.extend(["socat", "STDIO", "UNIX-CONNECT:" + clean_path])
+
+
+    def send(self, data):
+        """ Open transport, send data, and yield response chunks.
+        """
+        try:
+            proc = subprocess.Popen(self.cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except OSError, exc:
+            raise urllib2.URLError("Calling %r failed (%s)!" % (' '.join(self.cmd), exc))
+        else:
+            stdout, stderr = proc.communicate(data)
+            if proc.returncode:
+                raise urllib2.URLError("Calling %r failed with RC=%d!\n%s" % (
+                   ' '.join(self.cmd), proc.returncode, stderr,
+                ))
+            yield stdout
+
+        # Can't use communicate:
+        # that would close stdin, send a sighup, netcat would bail.
+        #write_scgi(proc.stdin, data)
+        #yield proc.stdout.read()
+        #proc.stdin.close()
+        #proc.wait()
+    
+        #if proc.returncode:
+        #    raise subprocess.CalledProcessError(cmd, proc.returncode)
+    
 
 TRANSPORTS = {
     "scgi": LocalTransport,
-    #"scgi+ssh": ,
+    "scgi+ssh": SSHTransport,
 }
 
 # Register our schemes to be parsed as having a netloc
