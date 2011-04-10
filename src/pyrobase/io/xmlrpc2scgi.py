@@ -136,16 +136,6 @@ class SSHTransport(object):
                    ' '.join(self.cmd), proc.returncode, stderr,
                 ))
             yield stdout
-
-        # Can't use communicate:
-        # that would close stdin, send a sighup, netcat would bail.
-        #write_scgi(proc.stdin, data)
-        #yield proc.stdout.read()
-        #proc.stdin.close()
-        #proc.wait()
-    
-        #if proc.returncode:
-        #    raise subprocess.CalledProcessError(cmd, proc.returncode)
     
 
 TRANSPORTS = {
