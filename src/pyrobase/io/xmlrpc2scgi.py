@@ -51,7 +51,7 @@ class LocalTransport(object):
             # TCP socket
             addrinfo = list(set(socket.getaddrinfo(url.hostname, url.port, socket.AF_INET, socket.SOCK_STREAM)))
             if len(addrinfo) != 1:
-                raise urllib2.URLError("Host of URL %r resolves to multiple addresses" % url.geturl())
+                raise urllib2.URLError("Host of URL %r resolves to multiple addresses %r" % (url.geturl(), addrinfo))
 
             self.sock_args = addrinfo[0][:3]
             self.sock_addr = addrinfo[0][4] 
