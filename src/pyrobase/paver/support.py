@@ -27,7 +27,8 @@ from pyrobase import iterutil
 
 
 def venv_bin(name=None):
-    """ Get the directory for virtualenv stubs, or a full executablpath.
+    """ Get the directory for virtualenv stubs, or a full executable path
+        if C{name} is provided.
     """
     if not hasattr(sys, "real_prefix"):
         easy.error("ERROR: '%s' is not a virtualenv" % (sys.executable,))
@@ -80,13 +81,12 @@ def task_requires(*dependencies):
             task = tasks.Task(task)
 
         def tool_task(*args, **kw):
-            "Decorator callable."
+            "Install requirements, then call original task."
             install_tools(dependencies)
             return task_body(*args, **kw)
 
-        task_body = task.func
-        task.func = tool_task
-
+        # Apply our wrapper to original task 
+        task_body, task.func = task.func, tool_task
         return task
 
     return entangle
