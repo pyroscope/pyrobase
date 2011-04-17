@@ -14,4 +14,4 @@ pyrobase (0.1) hardy; urgency=medium
   * testing: unit test helpers. 
   * unit tests with >80% average coverage
     
- -- pyroscope <pyroscope.project@gmail.com>  Sun, 17 Apr 2011 12:20:44 +0200
+ -- pyroscope <pyroscope.project@gmail.com>  Sun, 17 Apr 2011 17:03:00 +0200
