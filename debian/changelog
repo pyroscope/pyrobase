@@ -1,5 +1,17 @@
-pyrobase (0.1) hardy; urgency=low
+pyrobase (0.1) hardy; urgency=medium
 
-  * project bootstrap
-
- -- pyroscope <pyroscope.project@gmail.com>  Tue, 22 Mar 2011 19:45:02 +0100
+  * first official release
+  * Paver tasks for epydoc, pylint, and on-demand installing of only 
+    optionally needed build tools, which makes it easier and faster 
+    to just build from source
+  * io.xmlrpc21scgi: a revamped xmlrpc2scgi with a transport model 
+    for UNIX domain and TCP sockets, and scgi+ssh scheme allowing
+    secure remote access to UNIX domain sockets via SSH.
+  * bencode: (de-)serialization of the bencode format. 
+  * fmt: formatting helpers, mostly for presentation to humans. 
+  * iterutil: collection helpers. 
+  * parts: some basic types. 
+  * testing: unit test helpers. 
+  * unit tests with >80% average coverage
+    
+ -- pyroscope <pyroscope.project@gmail.com>  Sun, 17 Apr 2011 12:20:44 +0200
