@@ -18,6 +18,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
+import time
 import socket
 import urllib2
 import logging
@@ -27,6 +28,26 @@ from pyrobase.io import xmlrpc2scgi
 
 log = logging.getLogger(__name__)
 log.trace("module loaded")
+
+
+class MockedTransport(object):
+
+    def __init__(self, url):
+        self.url = url
+
+    def send(self, data):
+        time.sleep(.01)
+        xml = (
+            '<?xml version="1.0" encoding="UTF-8"?>'
+            '<methodResponse><params>'
+            '<param><value><string><![CDATA[%r]]]]></string></value></param>'
+            '</params></methodResponse>' % data
+        )
+        return (
+            'Content-Length: %d\r\n'
+            '\r\n'
+            '%s' % (len(xml), xml)
+        )
 
 
 class TransportTest(unittest.TestCase):
@@ -49,6 +70,22 @@ class TransportTest(unittest.TestCase):
             self.failUnlessEqual(result.sock_args[0], family)
             if family == socket.AF_UNIX:
                 self.failUnless(result.sock_addr.endswith("/tmp/socket"))
+
+    def test_ssh_transports(self):
+        testcases = (
+            ("scgi+ssh://localhost/tmp/foo",),
+            ("scgi+ssh://localhost:5000/~/foo",),
+        )
+        for url, in testcases:
+            # JUst make sure they get parsed with no errors
+            xmlrpc2scgi.transport_from_url(url) 
+
+        # Port handling
+        self.failIf("-p" in xmlrpc2scgi.transport_from_url("scgi+ssh://localhost/foo").cmd) 
+        self.failUnless("-p" in xmlrpc2scgi.transport_from_url("scgi+ssh://localhost:5000/foo").cmd) 
+
+        # Errors
+        self.failUnlessRaises(urllib2.URLError, xmlrpc2scgi.transport_from_url, "scgi+ssh://localhost:5000") 
 
 
 class HelperTest(unittest.TestCase):
@@ -91,6 +128,35 @@ class HelperTest(unittest.TestCase):
         payload, headers = xmlrpc2scgi._parse_response(data)
         self.failUnlessEqual(payload, "*"*10)
         self.failUnlessEqual(headers, {"Content-Length": "10"})
+
+
+class SCGIRequestTest(unittest.TestCase):
+    
+    def test_init(self):
+        r1 = xmlrpc2scgi.SCGIRequest("example.com:5000")
+        r2 = xmlrpc2scgi.SCGIRequest(r1.transport)
+        self.failUnless(r1.transport is r2.transport)
+
+    def test_send(self):
+        req = xmlrpc2scgi.SCGIRequest(MockedTransport("foo"))
+        resp = req.send("bar")
+        bad = "Bad response %r" % resp
+        self.failUnless(resp.startswith("<?xml "), bad)
+        self.failUnless("bar" in resp, bad)
+        self.failIf(req.latency == 0, "Latency cannot be zero")
+
+    def test_scgi_request(self):
+        resp = xmlrpc2scgi.scgi_request(MockedTransport("foo"), "bar", "baz")
+        bad = "Bad response %s" % resp
+        self.failUnless(resp.startswith('"26:CONTENT_LENGTH'), bad)
+        self.failUnless("<methodName>bar</methodName>" in resp, bad)
+        self.failUnless("<value><string>baz</string></value>" in resp, bad)
+
+    def test_scgi_request_raw(self):
+        resp = xmlrpc2scgi.scgi_request(MockedTransport("foo"), "bar", "baz", deserialize=False)
+        bad = "Bad response %s" % resp
+        self.failUnless(resp.startswith("<?xml version="), bad)
+        self.failUnless("<![CDATA[" in resp, bad)
 
 
 if __name__ == "__main__":
