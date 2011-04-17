@@ -51,8 +51,8 @@ Next, install necessary tools and build the project:
     easy_install -U setuptools paver
     paver develop -U
     paver docs
-    paver test
-    paver lint
+    paver lint -m
+    paver coverage
 
 
 ACKNOWLEDGEMENTS
