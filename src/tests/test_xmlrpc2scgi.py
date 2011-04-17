@@ -46,7 +46,7 @@ class TransportTest(unittest.TestCase):
         )
         for url, family in testcases:
             result = xmlrpc2scgi.transport_from_url(url) 
-            self.failUnlessEqual(result.sock.family, family)
+            self.failUnlessEqual(result.sock_args[0], family)
             if family == socket.AF_UNIX:
                 self.failUnless(result.sock_addr.endswith("/tmp/socket"))
 
