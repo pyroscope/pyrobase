@@ -62,7 +62,6 @@ project = dict(
     install_requires = [
     ],
     setup_requires = [
-        "Paver>=1.0", 
     ],
 
     # tests
