@@ -4,7 +4,7 @@ pyrobase (0.1) hardy; urgency=medium
   * Paver tasks for epydoc, pylint, and on-demand installing of only 
     optionally needed build tools, which makes it easier and faster 
     to just build from source
-  * io.xmlrpc21scgi: a revamped xmlrpc2scgi with a transport model 
+  * io.xmlrpc2scgi: a revamped xmlrpc2scgi with a transport model 
     for UNIX domain and TCP sockets, and scgi+ssh scheme allowing
     secure remote access to UNIX domain sockets via SSH.
   * bencode: (de-)serialization of the bencode format. 
