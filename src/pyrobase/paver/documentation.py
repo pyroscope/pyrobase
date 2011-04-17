@@ -30,6 +30,7 @@ from pyrobase.paver import support
 @easy.task
 @easy.cmdopts([
     ('docs-dir=', 'd', 'directory to put the api documentation in'),
+    ('includes=', 'i', 'list of additional packages'),
     ('excludes=', 'x', 'list of packages to exclude'),
 ])
 @support.task_requires("epydoc>=3.0")
@@ -45,6 +46,14 @@ def docs():
 
     # clean up previous docs
     (easy.path(docs_dir) / "epydoc.css").exists() and easy.path(docs_dir).rmtree()
+
+    # set up includes
+    try:
+        include_names = easy.options.docs.includes
+    except AttributeError:
+        include_names = []
+    else:
+        include_names = include_names.replace(',', ' ').split()
 
     # set up excludes
     try:
@@ -70,7 +79,7 @@ def docs():
             "--name", "%s %s" % (easy.options.setup.name, easy.options.setup.version),
             "--url", easy.options.setup.url,
             "--graph", "umlclasstree",
-        ] + excludes + support.toplevel_packages()
+        ] + excludes + support.toplevel_packages() + include_names
         sys.stderr.write("Running '%s'\n" % ("' '".join(sys.argv)))
         cli.cli()
     finally:
