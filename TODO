@@ -1,6 +1,5 @@
-- add paver tasks
 - base classes for scripts
-- move most stuff from pyrocore.util
+- move more stuff from pyrocore.util
 - logging helpers
-- add missing unit tests
+- add missing unit tests (pyrobase.paver)
 
