@@ -3,5 +3,8 @@
 .pydevproject
 .settings
 build
+bin
+include
+lib
 src/*.egg-info
 
