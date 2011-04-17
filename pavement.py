@@ -63,8 +63,6 @@ project = dict(
     ],
     setup_requires = [
         "Paver>=1.0", 
-        #"nose>=1.0", 
-        #"coverage>=3.4", 
     ],
 
     # tests
@@ -129,10 +127,11 @@ def dist_docs():
 #
 
 @task
-@needs("nosetests")
+@requires("nose>=1.0", "coverage>=3.4")
 def test():
     """ Run unit tests.
     """
+    environment.call_task("nosetests")
 
 
 @task
