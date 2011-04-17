@@ -75,12 +75,12 @@ project = dict(
     license = [line.strip() for line in __doc__.splitlines()
         if line.strip().startswith("Copyright")][0],
     url = "https://github.com/pyroscope/pyrobase",
-    keywords = "python utility library",
+    keywords = "python utility library paver unittests",
     classifiers = [
         # see http://pypi.python.org/pypi?:action=list_classifiers
-        "Development Status :: 3 - Alpha",
+        #"Development Status :: 3 - Alpha",
         #"Development Status :: 4 - Beta",
-        #"Development Status :: 5 - Production/Stable",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: GNU General Public License (GPL)",
         "Natural Language :: English",
