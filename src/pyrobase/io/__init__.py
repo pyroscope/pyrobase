@@ -1,4 +1,4 @@
-""" PyroBase - Input / Output (network / filesystem).
+""" Input / Output (network / filesystem).
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
 

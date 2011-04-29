@@ -1,4 +1,4 @@
-""" PyroBase - Bencode support.
+""" Bencode support.
 
     See http://en.wikipedia.org/wiki/Bencode
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=W0611
-""" PyroBase - Paver Easy Task Import.
+""" Paver Easy Task Import.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
 

@@ -1,4 +1,4 @@
-""" PyroBase - Iterator Helper tests.
+""" Iterator Helper tests.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
 

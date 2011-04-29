@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" PyroBase - Helpers for iterables and collections.
+""" Helpers for iterables and collections.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
 

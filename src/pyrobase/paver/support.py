@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=W0106
-""" PyroBase - Paver Task Implementation Helpers.
+""" Paver Task Implementation Helpers.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
 

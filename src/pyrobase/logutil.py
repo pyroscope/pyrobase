@@ -1,4 +1,4 @@
-""" PyroBase - Logging Support.
+""" Logging Support.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
 

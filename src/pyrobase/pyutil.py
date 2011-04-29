@@ -1,4 +1,4 @@
-""" PyroBase - Python Language / Runtime Support.
+""" Python Language / Runtime Support.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
 

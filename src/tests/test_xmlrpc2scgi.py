@@ -1,4 +1,4 @@
-""" PyroBase - SCGI tests.
+""" SCGI tests.
 
     List of test cases taken from original BitTorrent code by Bram Cohen.
 

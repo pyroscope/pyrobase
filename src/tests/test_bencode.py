@@ -1,4 +1,4 @@
-""" PyroBase - Bencode tests.
+""" Bencode tests.
 
     List of test cases taken from original BitTorrent code by Bram Cohen.
 

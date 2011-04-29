@@ -1,4 +1,4 @@
-""" PyroBase - General Python Helpers and Utilities.
+""" General Python Helpers and Utilities.
 
     pyrobase assembles general Python helper functions and classes that 
     can be applied to any project. That includes some additional tasks

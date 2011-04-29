@@ -1,4 +1,4 @@
-""" PyroBase - XMLRPC via SCGI client proxy over various transports.
+""" XMLRPC via SCGI client proxy over various transports.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
 
