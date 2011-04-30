@@ -8,7 +8,7 @@
     All modules have unit tests (currently pyrobase.paver is an exception),
     and the goal is to reach >80% coverage.
     
-    See https://github.com/pyroscope/pyrobase/wiki for more.
+    See U{https://github.com/pyroscope/pyrobase/wiki} for more.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
 """

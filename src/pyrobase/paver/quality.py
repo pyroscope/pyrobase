@@ -34,8 +34,7 @@ from pyrobase.paver import support
 ])
 @support.task_requires("pylint>=0.23")
 def lint():
-    """ Report pylint results.
-    """
+    "report pylint results"
     from pylint import lint as linter
 
     # report according to file extension

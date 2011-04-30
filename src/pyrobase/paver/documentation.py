@@ -34,8 +34,7 @@ from pyrobase.paver import support
 ])
 @support.task_requires("epydoc>=3.0")
 def docs():
-    """ Create documentation.
-    """
+    "create documentation"
     from epydoc import cli
 
     easy.path('build').exists() or easy.path('build').makedirs()

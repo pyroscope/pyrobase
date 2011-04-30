@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=W0611
-""" Paver Easy Task Import.
+""" Paver Cleanup Tasks.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
 """
@@ -17,14 +16,31 @@
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-# Add a project's "src" to the path, if it exists and isn't there yet
-import os, sys
-if os.path.abspath("src") not in sys.path:
-    sys.path.insert(0, os.path.abspath("src"))
-del os, sys
+from __future__ import with_statement
 
-# Import public symbols
-from pyrobase.paver.quality import lint #@UnusedImport
-from pyrobase.paver.documentation import docs #@UnusedImport
-from pyrobase.paver.housekeeping import clean, dist_clean #@UnusedImport
-from pyrobase.paver.support import task_requires as requires #@UnusedImport
+import os
+import glob
+
+from paver import easy
+
+
+@easy.task
+@easy.cmdopts([
+    ('src-dir=', 's', 'directory where the source lives'),
+])
+@easy.needs("distutils.command.clean")
+def clean():
+    "take out the trash"
+    src_dir = easy.options.docs.get('src_dir', 'src' if easy.path('src').exists() else '.')
+
+    with easy.pushd(src_dir):
+        for pkg in set(easy.options.setup.packages) | set(("tests",)):
+            for filename in glob.glob(pkg.replace('.', os.sep) + "/*.py[oc~]"):
+                easy.path(filename).remove()
+
+
+@easy.task
+@easy.needs("clean")
+def dist_clean():
+    "clean up, including dist directory"
+    easy.path("dist").rmtree()
