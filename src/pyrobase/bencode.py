@@ -1,3 +1,4 @@
+# pylint: disable=I0011,R0903
 """ Bencode support.
 
     Copyright (c) 2009, 2011 The PyroScope Project <pyroscope.project@gmail.com>
@@ -35,7 +36,7 @@ class Decoder(object):
         self.char_encoding = char_encoding
 
 
-    def decode(self, check_trailer=False):
+    def decode(self, check_trailer=False): # pylint: disable=I0011,R0912
         """ Decode data in C{bytes} and return deserialized object.
 
             @param check_trailer: Raise error if trailing junk is found in data?  

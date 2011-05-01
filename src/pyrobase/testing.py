@@ -44,10 +44,10 @@ def mockedopen(fakefiles=None):
     
         @param fakefiles: Prepopulated filesystem, this is passed on as the context's target. 
     """
-    import __builtin__
+    import __builtin__ # pylint: disable=W0404
     fakefiles = fakefiles or {}
 
-    def mock_open(name, mode=None, buffering=None):
+    def mock_open(name, mode=None, buffering=None): # pylint: disable=W0613
         "Helper"
         mode = mode or "r"
         if mode.startswith('r'):

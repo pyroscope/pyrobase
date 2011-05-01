@@ -35,7 +35,7 @@ from pyrobase.paver import support
 @support.task_requires("epydoc>=3.0")
 def docs():
     "create documentation"
-    from epydoc import cli
+    from epydoc import cli # pylint: disable=W0404
 
     easy.path('build').exists() or easy.path('build').makedirs()
 
