@@ -28,8 +28,12 @@ import urlparse
 import xmlrpclib
 import subprocess
 
+
+class SCGIException(Exception):
+    """SCGI protocol error"""
+
 # Types of exceptions thrown
-ERRORS = (urllib2.URLError, xmlrpclib.Fault, socket.error)
+ERRORS = (SCGIException, urllib2.URLError, xmlrpclib.Fault, socket.error)
 
 
 #
@@ -190,17 +194,23 @@ def _encode_payload(data, headers=None):
 
 def _parse_headers(headers):
     "Get headers dict from header string."
-    return dict(line.rstrip().split(": ", 1)
-        for line in headers.splitlines()
-        if line
-    )
+    try:
+        return dict(line.rstrip().split(": ", 1)
+            for line in headers.splitlines()
+            if line
+        )
+    except (TypeError, ValueError), exc:
+        raise SCGIException("Error in SCGI headers %r (%s)" % (headers, exc,))
 
 
 def _parse_response(resp):
     """ Get xmlrpc response from scgi response
     """
     # Assume they care for standards and send us CRLF (not just LF)
-    headers, payload = resp.split("\r\n\r\n", 1)
+    try:
+        headers, payload = resp.split("\r\n\r\n", 1)
+    except (TypeError, ValueError), exc:
+        raise SCGIException("No header delimiter in SCGI response of length %d (%s)" % (len(resp), exc,))
     headers = _parse_headers(headers)
 
     clen = headers.get("Content-Length")
