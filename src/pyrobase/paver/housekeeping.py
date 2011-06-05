@@ -31,7 +31,9 @@ from paver import easy
 @easy.needs("distutils.command.clean")
 def clean():
     "take out the trash"
-    src_dir = easy.options.docs.get('src_dir', 'src' if easy.path('src').exists() else '.')
+    src_dir = easy.options.setdefault("docs", {}).get('src_dir', None)
+    if src_dir is None:
+        src_dir = 'src' if easy.path('src').exists() else '.'
 
     with easy.pushd(src_dir):
         for pkg in set(easy.options.setup.packages) | set(("tests",)):
