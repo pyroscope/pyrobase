@@ -15,3 +15,15 @@
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+# Maximum length of object representations
+MAX_DISPLAY_LEN = 99
+
+
+def shorten(text):
+    """ Reduce text length for displaying / logging purposes.
+    """
+    if len(text) >= MAX_DISPLAY_LEN:
+        text = text[:MAX_DISPLAY_LEN//2]+"..."+text[-MAX_DISPLAY_LEN//2:]
+    return text
+
