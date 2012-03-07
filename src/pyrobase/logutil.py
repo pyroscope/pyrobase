@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+import logging
 
 # Maximum length of object representations
 MAX_DISPLAY_LEN = 99
@@ -27,3 +28,11 @@ def shorten(text):
         text = text[:MAX_DISPLAY_LEN//2]+"..."+text[-MAX_DISPLAY_LEN//2:]
     return text
 
+
+def get_logfile(logger=None):
+    """ Return log file of first file handler associated with the (root) logger.
+        None if no such handler is found.
+    """
+    logger = logger or logging.getLogger()
+    handlers = [i for i in logger.handlers if isinstance(i, logging.FileHandler)]
+    return handlers[0].baseFilename if handlers else None
