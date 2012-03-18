@@ -40,6 +40,12 @@ class InterpolationTemplate(object):
         return self.fmt
 
 
+    def __str__(self):
+        """ Returns interpolation string.
+        """
+        return self.fmt
+
+
     def substitute(self, **variables):
         """ Return expanded template for given variable set.
         """

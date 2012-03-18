@@ -171,10 +171,11 @@ def _main():
         image = sys.argv[1]
     except IndexError:
         print("Usage: python -m pyrobase.webservice.imgur <url>")
-    except UploadError, exc:
-        print("Upload error. %s" % exc)
     else:
-        pprint.pprint(copy_image_from_url(image, cache_dir=tempfile.gettempdir()))
+        try:
+            pprint.pprint(copy_image_from_url(image, cache_dir=tempfile.gettempdir()))
+        except UploadError, exc:
+            print("Upload error. %s" % exc)
 
 
 # When called directly, e.g. via
