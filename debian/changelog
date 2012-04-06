@@ -1,4 +1,4 @@
-pyrobase (0.2) hardy; urgency=low
+pyrobase (0.2.1) hardy; urgency=low
 
   * SCGIException added to io.xmlrpc2scgi
   * paver: "-i" option added to "docs" task
