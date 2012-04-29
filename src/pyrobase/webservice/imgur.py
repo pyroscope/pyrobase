@@ -107,7 +107,7 @@ class ImgurUploader(object): # pylint: disable=R0903
 
         try:
             result = json.loads(body)
-        except json.decoder.JSONDecodeError, exc:
+        except (ValueError, TypeError), exc:
             raise httplib.HTTPException("Bad JSON data from imgur upload [%s]: %s" % (exc, logutil.shorten(body)))
         
         if "error" in result: 
@@ -149,7 +149,7 @@ def copy_image_from_url(url, cache_dir=None):
                 return parts.Bunch([(key, parts.Bunch(val))
                     for key, val in img_data.items() # BOGUS pylint: disable=E1103
                 ])
-            except (EnvironmentError, json.JSONDecodeError), exc:
+            except (EnvironmentError, TypeError, ValueError), exc:
                 LOG.warn("Problem reading cached data from '%s', ignoring cache... (%s)" % (json_path, exc))
 
     LOG.info("Copying '%s'..." % (url))
