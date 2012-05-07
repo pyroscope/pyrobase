@@ -98,7 +98,10 @@ class ImgurUploader(object): # pylint: disable=R0903
         handle = http.HttpPost(self.UPLOAD_URL, fields, mock_http=self.mock_http)
 
         response = handle.send()
-        LOG.debug("Image %s uploaded with result %d %s" % (image_repr, response.status, response.reason))
+        if response.status >= 300:
+            LOG.warn("Image %s upload failed with result %d %s" % (image_repr, response.status, response.reason))
+        else:
+            LOG.debug("Image %s uploaded with result %d %s" % (image_repr, response.status, response.reason))
         body = response.read()
         LOG.debug("Response size: %d" % len(body))
         LOG.debug("Response headers:\n  %s" % "\n  ".join([
