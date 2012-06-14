@@ -142,6 +142,8 @@ def to_utf8(text):
     """
     # return empty/false stuff unaltered
     if not text:
+        if isinstance(text, basestring):
+            text = ""
         return text
 
     try:
