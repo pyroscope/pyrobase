@@ -111,7 +111,9 @@ class ImgurUploader(object): # pylint: disable=R0903
         try:
             result = json.loads(body)
         except (ValueError, TypeError), exc:
-            raise httplib.HTTPException("Bad JSON data from imgur upload [%s]: %s" % (exc, logutil.shorten(body)))
+            raise httplib.HTTPException("Bad JSON data from imgur upload%s [%s]: %s" % (
+                ", looking like a CAPTCHA challenge" if "captcha" in body else "",
+                exc, logutil.shorten(body)))
         
         if "error" in result: 
             raise httplib.HTTPException("Error response from imgur.com: %(message)s" % result["error"], result)
@@ -137,14 +139,14 @@ def fake_upload_from_url(url):
         ))
 
 
-def copy_image_from_url(url, cache_dir=None):
-    """ Copy image from given URL and return upload metadata.
+def cache_image_data(cache_dir, cache_key, uploader, *args, **kwargs):
+    """ Call uploader and cache its results.
     """
     json_path = None
     if cache_dir:
-        json_path = os.path.join(cache_dir, "cached-img-%s.json" % hashlib.sha1(url).hexdigest())
+        json_path = os.path.join(cache_dir, "cached-img-%s.json" % cache_key)
         if os.path.exists(json_path):
-            LOG.info("Fetching '%s' from cache..." % (url))
+            LOG.info("Fetching %r from cache..." % (args,))
             try:
                 with closing(open(json_path, "r")) as handle:
                     img_data = json.load(handle)
@@ -155,14 +157,20 @@ def copy_image_from_url(url, cache_dir=None):
             except (EnvironmentError, TypeError, ValueError), exc:
                 LOG.warn("Problem reading cached data from '%s', ignoring cache... (%s)" % (json_path, exc))
 
-    LOG.info("Copying '%s'..." % (url))
-    img_data = ImgurUploader().upload(url)
+    LOG.info("Copying %r..." % (args,))
+    img_data = uploader(*args, **kwargs)
 
     if json_path:
         with closing(open(json_path, "w")) as handle:
             json.dump(img_data, handle)
 
     return img_data
+
+
+def copy_image_from_url(url, cache_dir=None):
+    """ Copy image from given URL and return upload metadata.
+    """
+    return cache_image_data(cache_dir, hashlib.sha1(url).hexdigest(), ImgurUploader().upload, url)
 
 
 def _main():
