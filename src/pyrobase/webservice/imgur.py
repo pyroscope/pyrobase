@@ -142,10 +142,15 @@ def fake_upload_from_url(url):
 def cache_image_data(cache_dir, cache_key, uploader, *args, **kwargs):
     """ Call uploader and cache its results.
     """
+    use_cache = True
+    if "use_cache" in kwargs:
+        use_cache = kwargs["use_cache"]
+        del kwargs["use_cache"]
+
     json_path = None
     if cache_dir:
         json_path = os.path.join(cache_dir, "cached-img-%s.json" % cache_key)
-        if os.path.exists(json_path):
+        if use_cache and os.path.exists(json_path):
             LOG.info("Fetching %r from cache..." % (args,))
             try:
                 with closing(open(json_path, "r")) as handle:
@@ -167,10 +172,10 @@ def cache_image_data(cache_dir, cache_key, uploader, *args, **kwargs):
     return img_data
 
 
-def copy_image_from_url(url, cache_dir=None):
+def copy_image_from_url(url, cache_dir=None, use_cache=True):
     """ Copy image from given URL and return upload metadata.
     """
-    return cache_image_data(cache_dir, hashlib.sha1(url).hexdigest(), ImgurUploader().upload, url)
+    return cache_image_data(cache_dir, hashlib.sha1(url).hexdigest(), ImgurUploader().upload, url, use_cache=use_cache)
 
 
 def _main():
