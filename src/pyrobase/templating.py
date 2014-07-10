@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Templating Helpers.
-    
+
     Copyright (c) 2012 The PyroScope Project <pyroscope.project@gmail.com>
 """
 # This program is free software; you can redistribute it and/or modify
@@ -49,17 +49,17 @@ class InterpolationTemplate(object):
     def substitute(self, **variables):
         """ Return expanded template for given variable set.
         """
-        return self.fmt % self.mapping(variables) 
+        return self.fmt % self.mapping(variables)
 
 
 def preparse(template_text, lookup=None):
     """ Do any special processing of a template, including recognizing the templating language
         and resolving file: references, then return an appropriate wrapper object.
-        
+
         Currently Tempita and Python string interpolation are supported.
         `lookup` is an optional callable that resolves any ambiguous template path.
     """
-    # First, try to resolve file: references to their contents 
+    # First, try to resolve file: references to their contents
     template_path = None
     try:
         is_file = template_text.startswith("file:")
@@ -84,8 +84,8 @@ def preparse(template_text, lookup=None):
     else:
         if template_text.startswith("{{"):
             import tempita # only on demand
-    
-            template = tempita.Template(template_text)
+
+            template = tempita.Template(template_text, name=template_path)
             template.__engine__ = "tempita"
         else:
             template = InterpolationTemplate(template_text)
