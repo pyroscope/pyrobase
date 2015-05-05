@@ -7,6 +7,4 @@ dist
 bin
 include
 lib
-setup.py
 src/*.egg-info
-
