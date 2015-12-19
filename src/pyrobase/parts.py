@@ -31,7 +31,7 @@ class Bunch(dict):
                 return self[name]
             except KeyError:
                 raise AttributeError("Bunch has no attribute %r in %s" % (
-                    name, ', '.join(map(repr, self.keys()))
+                    name, ', '.join([repr(i) for i in self.keys()])
                 ))
 
 
