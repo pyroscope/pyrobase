@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ Common Paver Tasks.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>

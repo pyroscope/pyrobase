@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=I0011
+# pylint: disable=
 """ Python Language / Runtime Support.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=W0106
+# pylint: disable=
 """ Paver Code Quality Tasks.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>

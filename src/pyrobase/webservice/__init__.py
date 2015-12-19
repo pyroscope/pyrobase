@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ Web Service APIs.
 
     Copyright (c) 2012 The PyroScope Project <pyroscope.project@gmail.com>

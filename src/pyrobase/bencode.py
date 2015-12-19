@@ -1,4 +1,5 @@
-# pylint: disable=I0011,R0903
+# -*- coding: utf-8 -*-
+# pylint: disable=
 """ Bencode support.
 
     Copyright (c) 2009, 2011 The PyroScope Project <pyroscope.project@gmail.com>

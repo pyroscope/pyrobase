@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ HTTP support.
 
     Copyright (c) 2012 The PyroScope Project <pyroscope.project@gmail.com>

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ General Python Helpers and Utilities.
 
     pyrobase assembles general Python helper functions and classes that
