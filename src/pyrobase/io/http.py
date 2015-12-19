@@ -32,12 +32,12 @@ class HttpPost(object):
     """
 
     def __init__(self, url, fields, headers=None, mock_http=False):
-        """ Initialize POST data. 
-            
+        """ Initialize POST data.
+
             Field values can be strings or files; files
             are expected to have a read() method and SHOULD have a 'name'
             attribute (i.e. look like handles returned by 'open()').
-        
+
             @param url: the URL to POST to.
             @param fields: sequence of (name, value) tuples.
             @param headers: dict of additional headers.
@@ -111,7 +111,7 @@ class HttpPost(object):
             if hasattr(value, "read"):
                 filename = getattr(value, "name", str(id(value))+".dat")
                 logical_lines.append('Content-Disposition: form-data; name="%s"; filename="%s"' % (
-                    name, 
+                    name,
                     os.path.basename(filename).replace("'", '_').replace('"', '_')
                 ))
                 logical_lines.append('Content-Type: %s' % get_content_type(filename))

@@ -39,8 +39,8 @@ class Decoder(object):
     def decode(self, check_trailer=False): # pylint: disable=I0011,R0912
         """ Decode data in C{bytes} and return deserialized object.
 
-            @param check_trailer: Raise error if trailing junk is found in data?  
-            @raise BencodeError: Invalid data. 
+            @param check_trailer: Raise error if trailing junk is found in data?
+            @raise BencodeError: Invalid data.
         """
         try:
             kind = self.bytes[self.offset]
@@ -103,7 +103,7 @@ class Decoder(object):
                 self.offset, self.bytes[self.offset:self.offset+32]
             ))
 
-        return obj        
+        return obj
 
 
 class Encoder(object):

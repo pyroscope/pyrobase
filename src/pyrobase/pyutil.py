@@ -35,4 +35,3 @@ def require_json():
             return simplejson
         except ImportError, exc:
             raise ImportError("""Please 'easy_install "simplejson>=2.1.6"' (%s)""" % (exc,))
-

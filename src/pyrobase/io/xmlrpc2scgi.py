@@ -47,10 +47,10 @@ class LocalTransport(object):
     # Amount of bytes to read at once
     CHUNK_SIZE = 32768
 
-    
+
     def __init__(self, url):
         self.url = url
-        
+
         if url.netloc:
             # TCP socket
             addrinfo = list(set(socket.getaddrinfo(url.hostname, url.port, socket.AF_INET, socket.SOCK_STREAM)))
@@ -58,14 +58,14 @@ class LocalTransport(object):
                 raise urllib2.URLError("Host of URL %r resolves to multiple addresses %r" % (url.geturl(), addrinfo))
 
             self.sock_args = addrinfo[0][:3]
-            self.sock_addr = addrinfo[0][4] 
+            self.sock_addr = addrinfo[0][4]
         else:
             # UNIX domain socket
             path = url.path
             if path.startswith("/~"):
                 path = os.path.expanduser(path)
             self.sock_args = (socket.AF_UNIX, socket.SOCK_STREAM)
-            self.sock_addr = os.path.abspath(path) 
+            self.sock_addr = os.path.abspath(path)
 
 
     def send(self, data):
@@ -76,9 +76,9 @@ class LocalTransport(object):
             sock.connect(self.sock_addr)
         except socket.error, exc:
             raise socket.error("Can't connect to %r (%s)" % (self.url.geturl(), exc))
-        
+
         try:
-            # Send request        
+            # Send request
             sock.send(data)
 
             # Read response
@@ -96,7 +96,7 @@ class LocalTransport(object):
 class SSHTransport(object):
     """ Transport via SSH to a UNIX domain socket.
     """
-    
+
     def __init__(self, url):
         self.url = url
         self.cmd = ['ssh', '-T'] # no pseudo-tty
@@ -140,7 +140,7 @@ class SSHTransport(object):
                    ' '.join(self.cmd), proc.returncode, stderr,
                 ))
             yield stdout
-    
+
 
 TRANSPORTS = {
     "scgi": LocalTransport,
@@ -188,7 +188,7 @@ def _encode_payload(data, headers=None):
     prolog = "CONTENT_LENGTH\0%d\0SCGI\x001\0" % len(data)
     if headers:
         prolog += _encode_headers(headers)
-    
+
     return _encode_netstring(prolog) + data
 
 
@@ -216,8 +216,8 @@ def _parse_response(resp):
     clen = headers.get("Content-Length")
     if clen is not None:
         # Check length, just in case the transport is bogus
-        assert len(payload) == int(clen) 
-    
+        assert len(payload) == int(clen)
+
     return payload, headers
 
 
@@ -227,10 +227,10 @@ def _parse_response(resp):
 class SCGIRequest(object):
     """ Send a SCGI request.
         See spec at "http://python.ca/scgi/protocol.txt".
-        
+
         Use tcp socket
         SCGIRequest('scgi://host:port').send(data)
-        
+
         Or use the named unix domain socket
         SCGIRequest('scgi:///tmp/rtorrent.sock').send(data)
     """
@@ -238,13 +238,13 @@ class SCGIRequest(object):
     def __init__(self, url_or_transport):
         try:
             self.transport = transport_from_url(url_or_transport + "")
-        except TypeError: 
+        except TypeError:
             self.transport = url_or_transport
 
         self.resp_headers = {}
         self.latency = 0.0
 
-    
+
     def send(self, data):
         """ Send data over scgi to URL and get response.
         """
@@ -264,12 +264,12 @@ def scgi_request(url, methodname, *params, **kw):
         @param url: Endpoint URL.
         @param methodname: XMLRPC method name.
         @param params: Tuple of simple python objects.
-        @keyword deserialize: Parse XML result? (default is True) 
+        @keyword deserialize: Parse XML result? (default is True)
         @return: XMLRPC response, or the equivalent Python data.
     """
     xmlreq = xmlrpclib.dumps(params, methodname)
     xmlresp = SCGIRequest(url).send(xmlreq)
-    
+
     if kw.get("deserialize", True):
         # This fixes a bug with the Python xmlrpclib module
         # (has no handler for <i8> in some versions)

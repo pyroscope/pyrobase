@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Unittest Helpers.
-    
+
     Copyright (c) 2009, 2011 The PyroScope Project <pyroscope.project@gmail.com>
 """
 # This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@ from contextlib import contextmanager
 class DictItemIO(StringIO.StringIO):
     """ StringIO that replaces itself in a dict on close.
     """
-    
+
     def __init__(self, namespace, key, buf=''):
         self.namespace = namespace
         self.key = key
@@ -41,8 +41,8 @@ class DictItemIO(StringIO.StringIO):
 @contextmanager
 def mockedopen(fakefiles=None):
     """ Mock the open call to use a dict as the file system.
-    
-        @param fakefiles: Prepopulated filesystem, this is passed on as the context's target. 
+
+        @param fakefiles: Prepopulated filesystem, this is passed on as the context's target.
     """
     import __builtin__ # pylint: disable=W0404
     fakefiles = fakefiles or {}
@@ -59,11 +59,11 @@ def mockedopen(fakefiles=None):
                 pass
             return StringIO.StringIO(fakefiles[name])
         else:
-            return DictItemIO(fakefiles, name)  
+            return DictItemIO(fakefiles, name)
 
-    builtin_open = __builtin__.open 
+    builtin_open = __builtin__.open
     try:
-        __builtin__.open = mock_open 
+        __builtin__.open = mock_open
         yield fakefiles
     finally:
-        __builtin__.open = builtin_open 
+        __builtin__.open = builtin_open

@@ -52,8 +52,8 @@ class ImgurUploader(object): # pylint: disable=R0903
 
 
     def __init__(self, api_key=None, mock_http=False):
-        """ Initialize upload parameters. 
-        
+        """ Initialize upload parameters.
+
             @param api_key: the API key (optionally taken from IMGUR_APIKEY environment variable).
         """
         self.api_key = api_key or os.environ.get("IMGUR_APIKEY")
@@ -61,7 +61,7 @@ class ImgurUploader(object): # pylint: disable=R0903
 
 
     def upload(self, image, name=None):
-        """ Upload the given image, which can be a http[s] URL, a path to an existing file, 
+        """ Upload the given image, which can be a http[s] URL, a path to an existing file,
             binary image data, or an open file handle.
         """
         assert self.api_key, "imgur API key is not set! Export the IMGUR_APIKEY environment variable..."
@@ -87,7 +87,7 @@ class ImgurUploader(object): # pylint: disable=R0903
                 image_type = "base64"
                 image_data = image_data.encode(image_type)
                 image_repr = "<binary data>"
-            
+
         # See http://api.imgur.com/resources_anon#upload
         fields = [
             ("key",     self.api_key),
@@ -114,8 +114,8 @@ class ImgurUploader(object): # pylint: disable=R0903
             raise httplib.HTTPException("Bad JSON data from imgur upload%s [%s]: %s" % (
                 ", looking like a CAPTCHA challenge" if "captcha" in body else "",
                 exc, logutil.shorten(body)))
-        
-        if "error" in result: 
+
+        if "error" in result:
             raise httplib.HTTPException("Error response from imgur.com: %(message)s" % result["error"], result)
 
         return parts.Bunch([(key, parts.Bunch(val))
@@ -124,17 +124,17 @@ class ImgurUploader(object): # pylint: disable=R0903
 
 
 def fake_upload_from_url(url):
-    """ Return a 'fake' upload data record, so that upload errors 
-        can be mitigated by using an original / alternative URL. 
+    """ Return a 'fake' upload data record, so that upload errors
+        can be mitigated by using an original / alternative URL.
     """
     return parts.Bunch(
         image=parts.Bunch(
-            animated='false', bandwidth=0, caption=None, views=0, deletehash=None, hash=None,  
+            animated='false', bandwidth=0, caption=None, views=0, deletehash=None, hash=None,
             name=(url.rsplit('/', 1) + [url])[1], title=None, type='image/*', width=0, height=0, size=0,
-            datetime=fmt.iso_datetime(), 
-        ), 
+            datetime=fmt.iso_datetime(),
+        ),
         links=parts.Bunch(
-            delete_page=None, imgur_page=None, 
+            delete_page=None, imgur_page=None,
             original=url, large_thumbnail=url, small_square=url,
         ))
 

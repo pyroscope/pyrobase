@@ -40,7 +40,7 @@ def venv_bin(name=None):
                 return os.path.join(bindir, name + os.path.splitext(sys.executable)[1])
             else:
                 return bindir
-    else:            
+    else:
         easy.error("ERROR: Scripts directory not found in '%s'" % (sys.prefix,))
         sys.exit(1)
 
@@ -54,10 +54,10 @@ def vsh(cmd, *args, **kw):
 
 def install_tools(dependencies):
     """ Install a required tool before using it, if it's missing.
-    
+
         Note that C{dependencies} can be a distutils requirement,
         or a simple name from the C{tools} task configuration, or
-        a (nested) list of such requirements. 
+        a (nested) list of such requirements.
     """
     tools = getattr(easy.options, "tools", {})
     for dependency in iterutil.flatten(dependencies):
@@ -71,7 +71,7 @@ def install_tools(dependencies):
 
 
 def task_requires(*dependencies):
-    """ A task decorator that ensures a distutils dependency (or a list thereof) is met 
+    """ A task decorator that ensures a distutils dependency (or a list thereof) is met
         before that task is executed.
     """
     def entangle(task):
@@ -84,7 +84,7 @@ def task_requires(*dependencies):
             install_tools(dependencies)
             return task_body(*args, **kw)
 
-        # Apply our wrapper to original task 
+        # Apply our wrapper to original task
         task_body, task.func = task.func, tool_task
         return task
 

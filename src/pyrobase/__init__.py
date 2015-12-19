@@ -1,13 +1,13 @@
 """ General Python Helpers and Utilities.
 
-    pyrobase assembles general Python helper functions and classes that 
+    pyrobase assembles general Python helper functions and classes that
     can be applied to any project. That includes some additional tasks
     for the Paver build tool, an improved xmlrpc2scgi module, unit test
     helpers, and generic base modules for various domains.
-    
+
     All modules have unit tests (currently pyrobase.paver is an exception),
     and the goal is to reach >80% coverage.
-    
+
     See U{https://github.com/pyroscope/pyrobase/wiki} for more.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>

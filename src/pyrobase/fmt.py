@@ -25,13 +25,13 @@ log = logging.getLogger(__name__)
 
 def human_size(size):
     """ Return a human-readable representation of a byte size.
-    
+
         @param size: Number of bytes as an integer or string.
         @return: String of length 10 with the formatted result.
     """
     if isinstance(size, basestring):
         size = int(size, 10)
-    
+
     if size < 0:
         return "-??? bytes"
 
@@ -69,12 +69,12 @@ def iso_datetime_optional(timestamp):
 
 def human_duration(time1, time2=None, precision=0, short=False):
     """ Return a human-readable representation of a time delta.
-    
+
         @param time1: Relative time value.
         @param time2: Time base (C{None} for now; 0 for a duration in C{time1}).
         @param precision: How many time units to return (0 = all).
-        @param short: Use abbreviations, and right-justify the result to always the same length. 
-        @return: Formatted duration. 
+        @param short: Use abbreviations, and right-justify the result to always the same length.
+        @return: Formatted duration.
     """
     if time2 is None:
         time2 = time.time()
@@ -92,16 +92,16 @@ def human_duration(time1, time2=None, precision=0, short=False):
         ("mins", duration // 60 % 60),
         ("secs", duration % 60),
     ]
-    
+
     # Kill leading zero parts
     while len(parts) > 1 and parts[0][1] == 0:
         parts = parts[1:]
 
-    # Limit to # of parts given by precision 
+    # Limit to # of parts given by precision
     if precision:
         parts = parts[:precision]
 
-    numfmt = ("%d", "%d"), ("%4d", "%2d")        
+    numfmt = ("%d", "%d"), ("%4d", "%2d")
     fmt = "%1.1s" if short else " %s"
     sep = " " if short else ", "
     result = sep.join((numfmt[bool(short)][bool(idx)] + fmt) % (val, key[:-1] if val == 1 else key)
@@ -119,9 +119,9 @@ def human_duration(time1, time2=None, precision=0, short=False):
 
 
 def to_unicode(text):
-    """ Return a decoded unicode string. 
+    """ Return a decoded unicode string.
         False values are returned untouched.
-    """ 
+    """
     if not text or isinstance(text, unicode):
         return text
 
@@ -181,7 +181,7 @@ def to_utf8(text):
 
 def to_console(text):
     """ Return a byte string intended for console output.
-    """ 
+    """
     if isinstance(text, str):
         # For now, leave byte strings as-is (ignoring possible display problems)
         return text
