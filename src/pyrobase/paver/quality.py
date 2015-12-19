@@ -21,6 +21,7 @@ from __future__ import with_statement
 
 import os
 import sys
+import subprocess
 
 from paver import easy
 from pyrobase.paver import support
@@ -32,16 +33,16 @@ from pyrobase.paver import support
     ('rcfile=', 'r', 'Configuration file [./pylint.cfg]'),
     ('msg-only', 'm', 'Only generate messages (no reports)'),
 ])
-@support.task_requires("pylint>=0.23")
+@support.task_requires("pylint>=1.4")
 def lint():
     "report pylint results"
     from pylint import lint as linter # pylint: disable=W0404
 
     # report according to file extension
-    reporters = {
-        ".html": linter.HTMLReporter,
-        ".log": linter.ParseableTextReporter,
-        ".txt": linter.TextReporter,
+    report_formats = {
+        ".html": "html",
+        ".log": "parseable",
+        ".txt": "text",
     }
 
     lint_build_dir = easy.path("build/lint")
@@ -50,7 +51,7 @@ def lint():
     argv = []
     rcfile = easy.options.lint.get("rcfile")
     if not rcfile and easy.path("pylint.cfg").exists():
-        rcfile = "pylint.cfg" 
+        rcfile = "pylint.cfg"
     if rcfile:
         argv += ["--rcfile", os.path.abspath(rcfile)]
     if easy.options.lint.get("msg_only", False):
@@ -68,18 +69,21 @@ def lint():
     try:
         with easy.pushd("src" if easy.path("src").exists() else "."):
             if outfile:
-                reporter_class = reporters.get(easy.path(outfile).ext, linter.TextReporter)
+                argv.extend(["-f", report_formats.get(easy.path(outfile).ext, "text")])
                 sys.stderr.write("Writing output to %r\n" % (str(outfile),))
-                linter.Run(argv, reporter=reporter_class(open(outfile, "w")))
+                outhandle = open(outfile, "w")
+                try:
+                    subprocess.check_call(["pylint"] + argv, stdout=outhandle)
+                finally:
+                    outhandle.close()
             else:
-                linter.Run(argv)
-    except SystemExit, exc:
-        if not exc.code:
+                subprocess.check_call(["pylint"] + argv, )
             sys.stderr.write("paver::lint - No problems found.\n")
-        elif exc.code & 32:
+    except subprocess.CalledProcessError, exc:
+        if exc.returncode & 32:
             # usage error (internal error in this code)
             sys.stderr.write("paver::lint - Usage error, bad arguments %r?!\n" % (argv,))
-            raise
+            sys.exit(exc.returncode)
         else:
             bits = {
                 1: "fatal",
@@ -89,8 +93,8 @@ def lint():
                 16: "convention",
             }
             sys.stderr.write("paver::lint - Some %s message(s) issued.\n" % (
-                ", ".join([text for bit, text in bits.items() if exc.code & bit])
+                ", ".join([text for bit, text in bits.items() if exc.returncode & bit])
             ))
-            if exc.code & 3:
+            if exc.returncode & 3:
                 sys.stderr.write("paver::lint - Exiting due to fatal / error message.\n")
-                raise
+                sys.exit(exc.returncode)
