@@ -92,4 +92,5 @@ def preparse(template_text, lookup=None):
 
         template.__file__ = template_path
 
+    template.__text__ = template_text
     return template
