@@ -4,7 +4,5 @@
 .settings
 build
 dist
-bin
-include
-lib
 src/*.egg-info
+.pyvenv/
