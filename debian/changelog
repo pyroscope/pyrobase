@@ -1,3 +1,12 @@
+pyrobase (0.3.1) precise; urgency=low
+
+  * bootstrap.sh: easy project setup
+  * logutil: added shorten() and get_logfile()
+  * webservice: added "imgur" module
+  * templating: basic helpers, moved from pyrocore
+
+ -- pyroscope <pyroscope.project@gmail.com>  Mon, 25 Jul 2016 22:19:29 +0200
+
 pyrobase (0.2.1) hardy; urgency=low
 
   * SCGIException added to io.xmlrpc2scgi
@@ -9,17 +18,17 @@ pyrobase (0.2.1) hardy; urgency=low
 pyrobase (0.1) hardy; urgency=medium
 
   * first official release
-  * Paver tasks for epydoc, pylint, and on-demand installing of only 
-    optionally needed build tools, which makes it easier and faster 
+  * Paver tasks for epydoc, pylint, and on-demand installing of only
+    optionally needed build tools, which makes it easier and faster
     to just build from source
-  * io.xmlrpc2scgi: a revamped xmlrpc2scgi with a transport model 
+  * io.xmlrpc2scgi: a revamped xmlrpc2scgi with a transport model
     for UNIX domain and TCP sockets, and scgi+ssh scheme allowing
     secure remote access to UNIX domain sockets via SSH.
-  * bencode: (de-)serialization of the bencode format. 
-  * fmt: formatting helpers, mostly for presentation to humans. 
-  * iterutil: collection helpers. 
-  * parts: some basic types. 
-  * testing: unit test helpers. 
+  * bencode: (de-)serialization of the bencode format.
+  * fmt: formatting helpers, mostly for presentation to humans.
+  * iterutil: collection helpers.
+  * parts: some basic types.
+  * testing: unit test helpers.
   * unit tests with >80% average coverage
-    
+
  -- pyroscope <pyroscope.project@gmail.com>  Sun, 17 Apr 2011 17:03:00 +0200
