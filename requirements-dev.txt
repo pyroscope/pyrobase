@@ -1,3 +1,6 @@
+# Full list of tools for development
 Paver==1.2.4
-tempita
-epydoc
+Tempita==0.5.2
+epydoc==3.0.1
+bpython==0.15
+pylint==1.5.6
