@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=
+# pylint: disable=logging-not-lazy
 """ imgur image hosting.
 
     Copyright (c) 2012 The PyroScope Project <pyroscope.project@gmail.com>

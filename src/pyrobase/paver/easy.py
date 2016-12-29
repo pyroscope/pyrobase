@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=unused-import
+# pylint: disable=unused-import, wrong-import-position
 """ Paver Easy Task Import.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
