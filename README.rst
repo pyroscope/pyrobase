@@ -1,7 +1,13 @@
-WHAT IS IT?
-===========
+pyrobase
+========
 
-pyrobase assembles general Python helper functions and classes that 
+.. contents:: **Contents**
+
+
+What is it?
+-----------
+
+``pyrobase`` assembles general Python helper functions and classes that
 can be applied to any project. That includes some additional tasks
 for the Paver build tool, an improved xmlrpc2scgi module, unit test
 helpers, and generic base modules for various domains.
@@ -12,42 +18,45 @@ and the goal is to reach >80% coverage.
 See https://github.com/pyroscope/pyrobase/wiki for more.
 
 
-INSTALLATION
-============
+Installation
+------------
 
-Install it with "easy_install pyrobase", or more commonly just add 
-it as a dependency to your project and call "setup.py develop -U".
+Install it with ``pip install pyrobase``, or more commonly just add
+it as a dependency to your project and call ``python setup.py develop -U``.
 
 
-USAGE
-=====
+Usage
+-----
 
-See the project's pavement.py and unit tests, and for a full API 
+See the project's ``pavement.py`` and unit tests, and for a full API
 documentation go to http://packages.python.org/pyrobase/.
 
 
-BUILD INSTRUCTIONS
-==================
+Build Instructions
+------------------
 
-First, check out the source:
+First, check out the source::
+
     git clone git://github.com/pyroscope/pyrobase.git ~/src/pyrobase
     cd ~/src/pyrobase
 
 You are strongly encouraged to build within a virtualenv, if your
-host has the "python-virtualenv" package installed this is simply done by
+host has the "python-virtualenv" package installed this is simply done by…
+
+::
 
     virtualenv --no-site-packages $(pwd)
 
-If you don't have that package, use these commands instead:
+If you don't have that package, use these commands instead::
 
     venv='https://github.com/pypa/virtualenv/raw/master/virtualenv.py'
     python -c "import urllib2; open('venv.py','w').write(urllib2.urlopen('$venv').read())"
     deactivate 2>/dev/null
     python venv.py --no-site-packages $(pwd)
 
-Next, install necessary tools and build the project:
+Next, install necessary tools and build the project::
 
-    . bin/activate 
+    . bin/activate
     easy_install -U setuptools paver
     paver develop -U
     paver docs
@@ -55,9 +64,9 @@ Next, install necessary tools and build the project:
     paver coverage
 
 
-ACKNOWLEDGEMENTS
-================
+Acknowledgements
+----------------
 
-Repository hosting @ github.
-Paver @ http://paver.github.com/paver/.
-https://github.com/Quantique for the inspiration on the scgi+ssh transport.
+* Repository hosting @ GitHub.
+* Paver @ http://paver.github.com/paver/.
+* https://github.com/Quantique for the inspiration on the scgi+ssh transport.
