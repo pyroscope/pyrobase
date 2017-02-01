@@ -4,3 +4,4 @@ Tempita==0.5.2
 epydoc==3.0.1
 bpython==0.15
 pylint==1.5.6
+twine==1.8.1
