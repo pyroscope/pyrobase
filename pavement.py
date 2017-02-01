@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ PyroBase - General Python Helpers and Utilities.
 
-    Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
+    Copyright (c) 2011-2017 The PyroScope Project <pyroscope.project@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ project = dict(
     zip_safe = True,
     data_files = [
         ("EGG-INFO", [
-            "README", "LICENSE", "debian/changelog", 
+            "README", "LICENSE", "debian/changelog",
         ]),
     ],
 
@@ -85,7 +85,7 @@ project = dict(
         "License :: OSI Approved :: GNU General Public License (GPL)",
         "Natural Language :: English",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 2.5",
+        "Programming Language :: Python :: 2.7",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Utilities",
     ],
