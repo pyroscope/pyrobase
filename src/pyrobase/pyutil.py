@@ -2,7 +2,7 @@
 # pylint: disable=
 """ Python Language / Runtime Support.
 
-    Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
+    Copyright (c) 2011-2017 The PyroScope Project <pyroscope.project@gmail.com>
 """
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,4 +34,4 @@ def require_json():
             import simplejson # pylint: disable=F0401
             return simplejson
         except ImportError, exc:
-            raise ImportError("""Please 'easy_install "simplejson>=2.1.6"' (%s)""" % (exc,))
+            raise ImportError("""Please 'pip install "simplejson>=2.1.6"' (%s)""" % (exc,))
