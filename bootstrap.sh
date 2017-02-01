@@ -4,7 +4,7 @@ test "$SCRIPTNAME" != "-bash" -a "$SCRIPTNAME" != "-/bin/bash" || SCRIPTNAME="${
 
 deactivate 2>/dev/null || true
 pyvenv=.pyvenv/$(basename $(builtin cd $(dirname "$SCRIPTNAME") && pwd))
-test -x $pyvenv/bin/python || ${VIRUALENV:-/usr/bin/virtualenv} --no-site-packages $pyvenv
+test -x $pyvenv/bin/python || ${VIRTUALENV:-/usr/bin/virtualenv} $pyvenv
 . $pyvenv/bin/activate
 for basepkg in pip setuptools wheel; do
     pip install -U $basepkg
@@ -14,3 +14,4 @@ pip install -r requirements-dev.txt
 paver generate_setup
 paver minilib
 paver bootstrap
+pip install -e .
