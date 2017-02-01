@@ -65,7 +65,7 @@ def install_tools(dependencies):
         try:
             pkg_resources.require(dependency)
         except pkg_resources.DistributionNotFound:
-            vsh("easy_install", "-q", dependency)
+            vsh("pip", "install", "-q", dependency)
             dependency = pkg_resources.require(dependency)
             easy.info("Installed required tool %s" % (dependency,))
 

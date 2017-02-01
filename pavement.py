@@ -148,9 +148,9 @@ def functest():
     venv.exists() and venv.rmtree()
     sh("git clone --local '%s' '%s'" % (os.getcwd(), venv))
     with pushd(venv) as basedir:
-        sh("virtualenv", "--no-site-packages", ".")
-        vsh("easy_install", "-q", "-U", "setuptools")
-        vsh("easy_install", "-q", "paver")
+        sh("virtualenv", ".")
+        vsh("pip", "install", "-q", "-U", "setuptools")
+        vsh("pip", "install", "-q", "paver")
         vsh("paver", "bootstrap")
 
 
