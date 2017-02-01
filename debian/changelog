@@ -1,13 +1,14 @@
 pyrobase (0.3.1) precise; urgency=low
 
-  * bootstrap.sh: easy project setup
   * logutil: added shorten() and get_logfile()
   * webservice: added "imgur" module
   * templating: basic helpers, moved from pyrocore
+  * io.xmlrpc2scgi: fix for URL parsing in Python 2.7
+  * bootstrap.sh: easy project setup
 
  -- pyroscope <pyroscope.project@gmail.com>  Mon, 25 Jul 2016 22:19:29 +0200
 
-pyrobase (0.2.1) hardy; urgency=low
+pyrobase (0.2) hardy; urgency=low
 
   * SCGIException added to io.xmlrpc2scgi
   * paver: "-i" option added to "docs" task
