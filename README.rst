@@ -1,6 +1,8 @@
 pyrobase
 ========
 
+*General Python Helpers and Utilities.*  |Issues|  |PyPI|
+
 .. contents:: **Contents**
 
 
@@ -70,3 +72,9 @@ Acknowledgements
 * Repository hosting @ GitHub.
 * Paver @ http://paver.github.com/paver/.
 * https://github.com/Quantique for the inspiration on the scgi+ssh transport.
+
+
+.. |Issues| image:: https://img.shields.io/github/issues/pyroscope/pyrobase.svg
+   :target: https://github.com/pyroscope/pyrobase/issues
+.. |PyPI| image:: https://img.shields.io/pypi/v/pyrobase.svg
+   :target: https://pypi.python.org/pypi/pyrobase/
