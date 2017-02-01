@@ -155,6 +155,8 @@ urlparse.uses_netloc.extend(TRANSPORTS.keys())
 def transport_from_url(url):
     """ Create a transport for the given URL.
     """
+    if '/' not in url and ':' in url and url.rsplit(':')[-1].isdigit():
+        url = 'scgi://' + url
     url = urlparse.urlsplit(url, "scgi", allow_fragments=False)
 
     try:

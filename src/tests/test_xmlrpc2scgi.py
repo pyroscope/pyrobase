@@ -50,7 +50,7 @@ class MockedTransport(object):
 
 
 class TransportTest(unittest.TestCase):
-    
+
     def test_bad_url(self):
         self.failUnlessRaises(urllib2.URLError, xmlrpc2scgi.transport_from_url, "xxxx:///")
 
@@ -65,8 +65,9 @@ class TransportTest(unittest.TestCase):
             ("scgi:/tmp/socket", socket.AF_UNIX),
         )
         for url, family in testcases:
-            result = xmlrpc2scgi.transport_from_url(url) 
-            self.failUnlessEqual(result.sock_args[0], family)
+            result = xmlrpc2scgi.transport_from_url(url)
+            self.failUnlessEqual("%s[%d]" % (url, result.sock_args[0]),
+                                 "%s[%d]" % (url, family))
             if family == socket.AF_UNIX:
                 self.failUnless(result.sock_addr.endswith("/tmp/socket"))
 
@@ -76,19 +77,19 @@ class TransportTest(unittest.TestCase):
             ("scgi+ssh://localhost:5000/~/foo",),
         )
         for url, in testcases:
-            # JUst make sure they get parsed with no errors
-            xmlrpc2scgi.transport_from_url(url) 
+            # Just make sure they get parsed with no errors
+            xmlrpc2scgi.transport_from_url(url)
 
         # Port handling
-        self.failIf("-p" in xmlrpc2scgi.transport_from_url("scgi+ssh://localhost/foo").cmd) 
-        self.failUnless("-p" in xmlrpc2scgi.transport_from_url("scgi+ssh://localhost:5000/foo").cmd) 
+        self.failIf("-p" in xmlrpc2scgi.transport_from_url("scgi+ssh://localhost/foo").cmd)
+        self.failUnless("-p" in xmlrpc2scgi.transport_from_url("scgi+ssh://localhost:5000/foo").cmd)
 
         # Errors
-        self.failUnlessRaises(urllib2.URLError, xmlrpc2scgi.transport_from_url, "scgi+ssh://localhost:5000") 
+        self.failUnlessRaises(urllib2.URLError, xmlrpc2scgi.transport_from_url, "scgi+ssh://localhost:5000")
 
 
 class HelperTest(unittest.TestCase):
-    
+
     def test_encode_netstring(self):
         testcases = (
             ("", "0:,"),
@@ -130,7 +131,7 @@ class HelperTest(unittest.TestCase):
 
 
 class SCGIRequestTest(unittest.TestCase):
-    
+
     def test_init(self):
         r1 = xmlrpc2scgi.SCGIRequest("example.com:5000")
         r2 = xmlrpc2scgi.SCGIRequest(r1.transport)
