@@ -4,9 +4,9 @@ pyrobase (0.3.1) precise; urgency=low
   * webservice: added "imgur" module
   * templating: basic helpers, moved from pyrocore
   * io.xmlrpc2scgi: fix for URL parsing in Python 2.7
-  * bootstrap.sh: easy project setup
+  * bootstrap.sh: easy workdir setup
 
- -- pyroscope <pyroscope.project@gmail.com>  Mon, 25 Jul 2016 22:19:29 +0200
+ -- pyroscope <pyroscope.project@gmail.com>  Fri, 03 Feb 2017 21:20:17 +0100
 
 pyrobase (0.2) hardy; urgency=low
 
