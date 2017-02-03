@@ -1,7 +1,7 @@
 pyrobase
 ========
 
-*General Python Helpers and Utilities.*  |Issues|  |PyPI|
+*General Python Helpers and Utilities.*  |Travis CI|  |Issues|  |PyPI|
 
 .. contents:: **Contents**
 
@@ -70,6 +70,8 @@ Acknowledgements
 * https://github.com/Quantique for the inspiration on the scgi+ssh transport.
 
 
+.. |Travis CI| image:: https://travis-ci.org/pyroscope/pyrocore.svg?branch=master
+    :target: https://travis-ci.org/pyroscope/pyrocore
 .. |Issues| image:: https://img.shields.io/github/issues/pyroscope/pyrobase.svg
    :target: https://github.com/pyroscope/pyrobase/issues
 .. |PyPI| image:: https://img.shields.io/pypi/v/pyrobase.svg
