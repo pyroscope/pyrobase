@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=
+# pylint: disable=too-few-public-methods
 """ Bencode support.
 
-    Copyright (c) 2009, 2011 The PyroScope Project <pyroscope.project@gmail.com>
+    Copyright (c) 2009-2017 The PyroScope Project <pyroscope.project@gmail.com>
 
     See http://en.wikipedia.org/wiki/Bencode
 """
@@ -29,79 +29,79 @@ class Decoder(object):
     """ Decode a string or stream to an object.
     """
 
-    def __init__(self, bytes, char_encoding=None):
+    def __init__(self, data, char_encoding=None):
         """ Initialize encoder.
         """
-        self.bytes = bytes
+        self.data = data
         self.offset = 0
         self.char_encoding = char_encoding
 
 
     def decode(self, check_trailer=False): # pylint: disable=I0011,R0912
-        """ Decode data in C{bytes} and return deserialized object.
+        """ Decode data in C{self.data} and return deserialized object.
 
             @param check_trailer: Raise error if trailing junk is found in data?
             @raise BencodeError: Invalid data.
         """
         try:
-            kind = self.bytes[self.offset]
+            kind = self.data[self.offset]
         except IndexError:
             raise BencodeError("Unexpected end of data at offset %d/%d" % (
-                self.offset, len(self.bytes),
+                self.offset, len(self.data),
             ))
 
         if kind.isdigit():
             # String
             try:
-                end = self.bytes.find(':', self.offset)
-                length = int(self.bytes[self.offset:end], 10)
+                end = self.data.find(':', self.offset)
+                length = int(self.data[self.offset:end], 10)
             except (ValueError, TypeError):
                 raise BencodeError("Bad string length at offset %d (%r...)" % (
-                    self.offset, self.bytes[self.offset:self.offset+32]
+                    self.offset, self.data[self.offset:self.offset+32]
                 ))
 
             self.offset = end+length+1
-            obj = self.bytes[end+1:self.offset]
+            obj = self.data[end+1:self.offset]
 
             if self.char_encoding:
                 try:
                     obj = obj.decode(self.char_encoding)
                 except UnicodeError:
-                    # deliver non-decodable string (bytes arrays) as-is
+                    # deliver non-decodable string (byte arrays) as-is
                     pass
         elif kind == 'i':
             # Integer
             try:
-                end = self.bytes.find('e', self.offset+1)
-                obj = int(self.bytes[self.offset+1:end], 10)
+                end = self.data.find('e', self.offset+1)
+                obj = int(self.data[self.offset+1:end], 10)
             except (ValueError, TypeError):
                 raise BencodeError("Bad integer at offset %d (%r...)" % (
-                    self.offset, self.bytes[self.offset:self.offset+32]
+                    self.offset, self.data[self.offset:self.offset+32]
                 ))
             self.offset = end+1
         elif kind == 'l':
             # List
             self.offset += 1
-            obj = []
-            while self.bytes[self.offset:self.offset+1] != 'e':
+            obj = []  # pylint: disable=redefined-variable-type
+            while self.data[self.offset:self.offset+1] != 'e':
                 obj.append(self.decode())
             self.offset += 1
         elif kind == 'd':
             # Dict
             self.offset += 1
             obj = {}
-            while self.bytes[self.offset:self.offset+1] != 'e':
+            while self.data[self.offset:self.offset+1] != 'e':
                 key = self.decode()
                 obj[key] = self.decode()
             self.offset += 1
         else:
             raise BencodeError("Format error at offset %d (%r...)" % (
-                self.offset, self.bytes[self.offset:self.offset+32]
+                self.offset, self.data[self.offset:self.offset+32]
             ))
 
-        if check_trailer and self.offset != len(self.bytes):
+        if check_trailer and self.offset != len(self.data):
             raise BencodeError("Trailing data at offset %d (%r...)" % (
-                self.offset, self.bytes[self.offset:self.offset+32]
+                self.offset, self.data[self.offset:self.offset+32]
             ))
 
         return obj
@@ -151,10 +151,10 @@ class Encoder(object):
         return self.result
 
 
-def bdecode(bytes, char_encoding=None):
+def bdecode(data, char_encoding=None):
     """ Decode a string or stream to an object.
     """
-    return Decoder(bytes, char_encoding).decode(check_trailer=True)
+    return Decoder(data, char_encoding).decode(check_trailer=True)
 
 
 def bencode(obj):
