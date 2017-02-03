@@ -70,8 +70,8 @@ Acknowledgements
 * https://github.com/Quantique for the inspiration on the scgi+ssh transport.
 
 
-.. |Travis CI| image:: https://travis-ci.org/pyroscope/pyrocore.svg?branch=master
-    :target: https://travis-ci.org/pyroscope/pyrocore
+.. |Travis CI| image:: https://travis-ci.org/pyroscope/pyrobase.svg?branch=master
+    :target: https://travis-ci.org/pyroscope/pyrobase
 .. |Issues| image:: https://img.shields.io/github/issues/pyroscope/pyrobase.svg
    :target: https://github.com/pyroscope/pyrobase/issues
 .. |PyPI| image:: https://img.shields.io/pypi/v/pyrobase.svg
