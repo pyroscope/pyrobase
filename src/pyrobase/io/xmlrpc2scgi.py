@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=
+# pylint: disable=too-few-public-methods
 """ XMLRPC via SCGI client proxy over various transports.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>

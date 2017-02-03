@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=too-few-public-methods
 """ Templating Helpers.
 
     Copyright (c) 2012 The PyroScope Project <pyroscope.project@gmail.com>
@@ -32,6 +33,8 @@ class InterpolationTemplate(object):
         self.fmt = unicode(fmt)
         self.mapping = mapping or (lambda _: _)
         self.__engine__ = "interpolation"
+        self.__file__ = None
+        self.__text__ = ''
 
 
     def __repr__(self):
@@ -83,12 +86,12 @@ def preparse(template_text, lookup=None):
         template = template_text
     else:
         if template_text.startswith("{{"):
-            import tempita # only on demand
+            import tempita  # only on demand
 
             template = tempita.Template(template_text, name=template_path)
             template.__engine__ = "tempita"
         else:
-            template = InterpolationTemplate(template_text)
+            template = InterpolationTemplate(template_text)  # pylint: disable=redefined-variable-type
 
         template.__file__ = template_path
 

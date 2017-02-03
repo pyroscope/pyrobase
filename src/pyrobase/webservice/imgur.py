@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=logging-not-lazy
+# pylint: disable=logging-not-lazy, bad-whitespace
 """ imgur image hosting.
 
     Copyright (c) 2012 The PyroScope Project <pyroscope.project@gmail.com>
@@ -181,7 +181,8 @@ def copy_image_from_url(url, cache_dir=None, use_cache=True):
 def _main():
     """ Command line interface for testing.
     """
-    import pprint, tempfile
+    import pprint
+    import tempfile
 
     try:
         image = sys.argv[1]

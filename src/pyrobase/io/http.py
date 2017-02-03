@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=too-few-public-methods
 """ HTTP support.
 
     Copyright (c) 2012 The PyroScope Project <pyroscope.project@gmail.com>

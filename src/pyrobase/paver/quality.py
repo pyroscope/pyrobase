@@ -46,7 +46,7 @@ def lint():
     }
 
     lint_build_dir = easy.path("build/lint")
-    lint_build_dir.exists() or lint_build_dir.makedirs()
+    lint_build_dir.exists() or lint_build_dir.makedirs()  # pylint: disable=expression-not-assigned
 
     argv = []
     rcfile = easy.options.lint.get("rcfile")

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=
+# pylint: disable=expression-not-assigned
 """ Paver Documentation Generator Tasks.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
