@@ -11,7 +11,7 @@
 
     See U{https://github.com/pyroscope/pyrobase/wiki} for more.
 
-    Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
+    Copyright (c) 2011-2017 The PyroScope Project <pyroscope.project@gmail.com>
 """
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
