@@ -88,7 +88,7 @@ Performing a Release
 
 #. Build the final release and upload it to PyPI::
 
-    paver sdist bdist_wheel
+    paver dist_clean sdist bdist_wheel
     twine upload dist/*.{zip,whl}
 
 #. Create the ZIP file with the API documentation::
