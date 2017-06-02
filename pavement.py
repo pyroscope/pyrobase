@@ -63,6 +63,10 @@ project = dict(
     ],
     setup_requires = [
     ],
+    extras_require={
+        'imgur': ['imgurpython', 'requests'],
+        'imgur_ssl': ['imgurpython', 'requests[security]'],
+    },
 
     # tests
     test_suite = "nose.collector",

@@ -21,11 +21,19 @@ from __future__ import with_statement
 
 import os
 import sys
+import time
 import socket
 import hashlib
 import httplib
 import logging
 from contextlib import closing
+
+try:
+    from requests.exceptions import RequestException
+    from imgurpython import ImgurClient
+except ImportError as _exc:
+    raise ImportError("Please 'pip install \"pyrobase[imgur]\"' (%s)" % (_exc,))
+from imgurpython.helpers.error import ImgurClientError, ImgurClientRateLimitError
 
 from pyrobase import parts, pyutil, logutil, fmt
 from pyrobase.io import http
@@ -33,9 +41,7 @@ from pyrobase.io import http
 json = pyutil.require_json()
 LOG = logging.getLogger(__name__)
 
-
-UploadError = (socket.error, httplib.HTTPException)
-
+UploadError = (socket.error, httplib.HTTPException, RequestException, ImgurClientError, ImgurClientRateLimitError)
 
 class ImgurUploader(object): # pylint: disable=R0903
     """ Upload an image to "imgur.com".
@@ -48,23 +54,23 @@ class ImgurUploader(object): # pylint: disable=R0903
             # OR: image = imgur.upload("http://i.imgur.com/5EuUx.jpg")
             print image.links.original
     """
-    UPLOAD_URL = "http://api.imgur.com/2/upload.json"
 
-
-    def __init__(self, api_key=None, mock_http=False):
+    def __init__(self, client_id=None, client_secret=None):
         """ Initialize upload parameters.
 
-            @param api_key: the API key (optionally taken from IMGUR_APIKEY environment variable).
+            @param client_id: the client ID (optionally taken from IMGUR_CLIENT_ID environment variable).
+            @param client_secret: the client secret (optionally taken from IMGUR_CLIENT_SECRET environment variable).
         """
-        self.api_key = api_key or os.environ.get("IMGUR_APIKEY")
-        self.mock_http = mock_http
+        self.client_id = client_id or os.environ.get("IMGUR_CLIENT_ID")
+        self.client_secret = client_secret or os.environ.get("IMGUR_CLIENT_SECRET")
 
 
     def upload(self, image, name=None):
         """ Upload the given image, which can be a http[s] URL, a path to an existing file,
             binary image data, or an open file handle.
         """
-        assert self.api_key, "imgur API key is not set! Export the IMGUR_APIKEY environment variable..."
+        assert self.client_id, "imgur client ID is not set! Export the IMGUR_CLIENT_ID environment variable..."
+        assert self.client_secret, "imgur client secret is not set! Export the IMGUR_CLIENT_SECRET environment variable..."
 
         # Prepare image
         try:
@@ -72,7 +78,7 @@ class ImgurUploader(object): # pylint: disable=R0903
         except (TypeError, ValueError):
             assert hasattr(image, "read"), "Image is neither a string nor an open file handle"
             image_type = "file"
-            image_data = image
+            image_data = image  # XXX are streams supported? need a temp file?
             image_repr = repr(image)
         else:
             if image.startswith("http:") or image.startswith("https:"):
@@ -81,57 +87,48 @@ class ImgurUploader(object): # pylint: disable=R0903
                 image_repr = image
             elif all(ord(i) >= 32 for i in image) and os.path.exists(image):
                 image_type = "file"
-                image_data = open(image, "rb")
+                image_data = image  # XXX open(image, "rb")
                 image_repr = "file:" + image
             else:
+                # XXX Not supported anymore (maybe use a temp file?)
                 image_type = "base64"
                 image_data = image_data.encode(image_type)
                 image_repr = "<binary data>"
 
-        # See http://api.imgur.com/resources_anon#upload
-        fields = [
-            ("key",     self.api_key),
-            ("type",    image_type),
-            ("image",   image_data),
-            ("name",    name or hashlib.md5(str(image)).hexdigest()),
-        ]
-        handle = http.HttpPost(self.UPLOAD_URL, fields, mock_http=self.mock_http)
+        # Upload image
+        # XXX "name",    name or hashlib.md5(str(image)).hexdigest()),
+        client = ImgurClient(self.client_id, self.client_secret)
+        result = (client.upload_from_url if image_type == 'url' else client.upload_from_path)(image_data)  # XXX config=None, anon=True)
 
-        response = handle.send()
-        if response.status >= 300:
-            LOG.warn("Image %s upload failed with result %d %s" % (image_repr, response.status, response.reason))
-        else:
-            LOG.debug("Image %s uploaded with result %d %s" % (image_repr, response.status, response.reason))
-        body = response.read()
-        LOG.debug("Response size: %d" % len(body))
-        LOG.debug("Response headers:\n  %s" % "\n  ".join([
-            "%s: %s" % item for item in response.getheaders()
-        ]))
+        if result['link'].startswith('http:'):
+            result['link'] = 'https:' + result['link'][5:]
+        result['hash'] = result['id']  # compatibility to API v1
+        result['caption'] = result['description']  # compatibility to API v1
 
-        try:
-            result = json.loads(body)
-        except (ValueError, TypeError), exc:
-            raise httplib.HTTPException("Bad JSON data from imgur upload%s [%s]: %s" % (
-                ", looking like a CAPTCHA challenge" if "captcha" in body else "",
-                exc, logutil.shorten(body)))
-
-        if "error" in result:
-            raise httplib.HTTPException("Error response from imgur.com: %(message)s" % result["error"], result)
-
-        return parts.Bunch([(key, parts.Bunch(val))
-            for key, val in result["upload"].items()
-        ])
+        return parts.Bunch(
+            image=parts.Bunch(result),
+            links=parts.Bunch(
+                delete_page=None,
+                imgur_page=None,
+                original=result['link'],
+                large_thumbnail="{0}s.{1}".format(*result['link'].rsplit('.', 1)),
+                small_square="{0}l.{1}".format(*result['link'].rsplit('.', 1)),
+            ))
 
 
 def fake_upload_from_url(url):
     """ Return a 'fake' upload data record, so that upload errors
-        can be mitigated by using an original / alternative URL.
+        can be mitigated by using an original / alternative URL,
+        especially when cross-loading from the web.
     """
     return parts.Bunch(
         image=parts.Bunch(
             animated='false', bandwidth=0, caption=None, views=0, deletehash=None, hash=None,
             name=(url.rsplit('/', 1) + [url])[1], title=None, type='image/*', width=0, height=0, size=0,
-            datetime=fmt.iso_datetime(),
+            datetime=int(time.time()), # XXX was fmt.iso_datetime() - in API v2 this is a UNIX timestamp
+            id='xxxxxxx', link=url, account_id=0, account_url=None, ad_type=0, ad_url='',
+            description=None, favorite=False, in_gallery=False, in_most_viral=False,
+            is_ad=False, nsfw=None, section=None, tags=[], vote=None,
         ),
         links=parts.Bunch(
             delete_page=None, imgur_page=None,
