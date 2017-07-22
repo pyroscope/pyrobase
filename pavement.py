@@ -166,6 +166,13 @@ def functest():
 def release():
     "check release before upload to PyPI"
     sh("paver bdist_wheel")
+    wheels = path("dist").files("*.whl")
+    if not wheels:
+        error("\n*** ERROR: No release wheel was built!")
+        sys.exit(1)
+    if any(".dev" in i for i in wheels):
+        error("\n*** ERROR: You're still using a 'dev' version!")
+        sys.exit(1)
 
     # Check that source distribution can be built and is complete
     print
