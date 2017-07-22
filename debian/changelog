@@ -1,8 +1,8 @@
-pyrobase (0.4.1) precise; urgency=low
+pyrobase (0.4.2) precise; urgency=low
 
-  * ...
+  * fix: imgur upload code
 
- -- pyroscope <pyroscope.project@gmail.com>  Fri, 03 Feb 2017 22:10:03 +0100
+ -- pyroscope <pyroscope.project@gmail.com>  Sun, 23 Jul 2017 15:33:23 +0200
 
 pyrobase (0.3.1) precise; urgency=low
 
