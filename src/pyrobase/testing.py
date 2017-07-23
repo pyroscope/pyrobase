@@ -24,6 +24,13 @@ try:
 except ImportError:
     from StringIO import StringIO
 
+try:
+    import mock
+except ImportError:
+    from unittest import mock
+
+from six import PY2
+
 
 class DictItemIO(StringIO):
     """ StringIO that replaces itself in a dict on close.
@@ -48,7 +55,6 @@ def mockedopen(fakefiles=None):
 
         @param fakefiles: Prepopulated filesystem, this is passed on as the context's target.
     """
-    import __builtin__ # pylint: disable=W0404
     fakefiles = fakefiles or {}
 
     def mock_open(name, mode=None, buffering=None): # pylint: disable=W0613
@@ -65,9 +71,5 @@ def mockedopen(fakefiles=None):
         else:
             return DictItemIO(fakefiles, name)
 
-    builtin_open = __builtin__.open
-    try:
-        __builtin__.open = mock_open
+    with mock.patch("__builtin__.open" if PY2 else "builtins.open", mock_open) as mock_file:
         yield fakefiles
-    finally:
-        __builtin__.open = builtin_open
