@@ -47,17 +47,17 @@ class FmtTest(unittest.TestCase):
         for val, expected in cases:
             result = fmt.human_size(val)
             assert result == expected
-    
+
     def test_iso_datetime(self):
         result = (fmt.iso_datetime(0), fmt.iso_datetime(12*3600), fmt.iso_datetime(23*3600))
         assert any("1970-01-01 " in i for i in result)
-    
+
     def test_iso_datetime_optional(self):
         result = (fmt.iso_datetime(86400), fmt.iso_datetime_optional(86400))
         assert result[0] == result[1]
         result = [fmt.iso_datetime_optional(i) for i in (0, "", None, False)]
         assert all(i == "never" for i in result)
-    
+
     def test_human_duration(self):
         now = time.time()
         cases = [
@@ -85,7 +85,7 @@ class FmtTest(unittest.TestCase):
         for val, expected in cases:
             result = fmt.human_duration(*val)
             assert result == expected
-    
+
     def test_to_unicode(self):
         cases = [
             ("", ""),
@@ -103,7 +103,7 @@ class FmtTest(unittest.TestCase):
         for val, expected in cases:
             result = fmt.to_unicode(val)
             assert result == expected
-    
+
     def test_to_utf8(self):
         cases = [
             ("", ""),
@@ -113,15 +113,15 @@ class FmtTest(unittest.TestCase):
             (u"\xea", "\xc3\xaa",),
             (u"\u20ac", "\xe2\x82\xac"),
             ("\xc3\xaa", "\xc3\xaa"),
-            ("\xfe\xff\x00\x20", u" "),
-            ("\xff\xfe\x20\x00", u" "),
-            ("\xef\xbb\xbf\x20", u" "),
-            ("\xc3\xc3\x81", "\xc3\xc3\x81"),
+            (b"\xfe\xff\x00\x20", u" "),
+            (b"\xff\xfe\x20\x00", u" "),
+            (b"\xef\xbb\xbf\x20", u" "),
+            (b"\xc3\xc3\x81", "\xc3\xc3\x81"),
         ]
         for val, expected in cases:
             result = fmt.to_utf8(val)
             assert result == expected
-    
+
     def test_to_console(self):
         cases = [
             ("", ""),
@@ -129,14 +129,14 @@ class FmtTest(unittest.TestCase):
             (u"\xea", "\xc3\xaa",),
             (u"\u20ac", "\xe2\x82\xac"),
             ("\xc3\xaa", "\xc3\xaa"),
-            ("\xfe\xff\x00\x20", "\xfe\xff\x00\x20"),
-            ("\xef\xbb\xbf\x20", "\xef\xbb\xbf\x20"),
-            ("\xc3\xc3\x81", "\xc3\xc3\x81"),
+            (b"\xfe\xff\x00\x20", "\xfe\xff\x00\x20"),
+            (b"\xef\xbb\xbf\x20", "\xef\xbb\xbf\x20"),
+            (b"\xc3\xc3\x81", "\xc3\xc3\x81"),
         ]
         for val, expected in cases:
             result = fmt.to_console(val)
             assert result == expected
-    
+
 
 if __name__ == "__main__":
     unittest.main()
