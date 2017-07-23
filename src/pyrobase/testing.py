@@ -17,11 +17,15 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 import errno
-import StringIO
 from contextlib import contextmanager
 
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
 
-class DictItemIO(StringIO.StringIO):
+
+class DictItemIO(StringIO):
     """ StringIO that replaces itself in a dict on close.
     """
 
@@ -30,12 +34,12 @@ class DictItemIO(StringIO.StringIO):
         self.key = key
 
         self.namespace[self.key] = self
-        StringIO.StringIO.__init__(self, buf)
+        StringIO.__init__(self, buf)
 
 
     def close(self):
         self.namespace[self.key] = self.getvalue()
-        StringIO.StringIO.close(self)
+        StringIO.close(self)
 
 
 @contextmanager
@@ -57,7 +61,7 @@ def mockedopen(fakefiles=None):
                 fakefiles[name].close()
             except AttributeError:
                 pass
-            return StringIO.StringIO(fakefiles[name])
+            return StringIO(fakefiles[name])
         else:
             return DictItemIO(fakefiles, name)
 
