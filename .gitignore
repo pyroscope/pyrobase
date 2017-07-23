@@ -6,3 +6,4 @@ build
 dist
 src/*.egg-info
 .pyvenv/
+.tox/
