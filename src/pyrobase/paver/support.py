@@ -37,7 +37,8 @@ def venv_bin(name=None):
         bindir = os.path.join(sys.prefix, bindir)
         if os.path.exists(bindir):
             if name:
-                return os.path.join(bindir, name + os.path.splitext(sys.executable)[1])
+                bin_ext = os.path.splitext(sys.executable)[1] if sys.platform == 'win32' else ''
+                return os.path.join(bindir, name + bin_ext)
             else:
                 return bindir
 
