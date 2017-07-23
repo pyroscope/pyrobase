@@ -20,7 +20,9 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from six import string_types
+from six import string_types, PY2
+
+int_like_types = (int, long, bool) if PY2 else  (int, bool)
 
 
 class BencodeError(ValueError):
@@ -119,11 +121,10 @@ class Encoder(object):
         """
         self.result = []
 
-
     def encode(self, obj):
         """ Add the given object to the result.
         """
-        if isinstance(obj, (int, long, bool)):
+        if isinstance(obj, int_like_types):
             self.result.append("i%de" % obj)
         elif isinstance(obj, string_types):
             self.result.extend([str(len(obj)), ':', str(obj)])
