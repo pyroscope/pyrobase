@@ -24,17 +24,22 @@ import os
 import time
 import pipes
 import socket
-import urllib2
-import urlparse
-import xmlrpclib
 import subprocess
+
+try:
+    from urllib.error import URLError
+except ImportError:
+    from urllib2 import URLError
+
+from six.moves import urllib_parse as urlparse
+from six.moves import xmlrpc_client as xmlrpclib
 
 
 class SCGIException(Exception):
     """SCGI protocol error"""
 
 # Types of exceptions thrown
-ERRORS = (SCGIException, urllib2.URLError, xmlrpclib.Fault, socket.error)
+ERRORS = (SCGIException, URLError, xmlrpclib.Fault, socket.error)
 
 
 #
@@ -56,7 +61,7 @@ class LocalTransport(object):
             # TCP socket
             addrinfo = list(set(socket.getaddrinfo(url.hostname, url.port, socket.AF_INET, socket.SOCK_STREAM)))
             if len(addrinfo) != 1:
-                raise urllib2.URLError("Host of URL %r resolves to multiple addresses %r" % (url.geturl(), addrinfo))
+                raise URLError("Host of URL %r resolves to multiple addresses %r" % (url.geturl(), addrinfo))
 
             self.sock_args = addrinfo[0][:3]
             self.sock_addr = addrinfo[0][4]
@@ -103,7 +108,7 @@ class SSHTransport(object):
         self.cmd = ['ssh', '-T'] # no pseudo-tty
 
         if not url.path.startswith('/'):
-            raise urllib2.URLError("Bad path in URL %r" % url.geturl())
+            raise URLError("Bad path in URL %r" % url.geturl())
 
         # pipes.quote is used because ssh always goes through a login shell.
         # The only exception is for redirecting ports, which can't be used
@@ -120,7 +125,7 @@ class SSHTransport(object):
         else:
             reconstructed_netloc = ssh_netloc
         if reconstructed_netloc != url.netloc:
-            raise urllib2.URLError("Bad location in URL %r (expected %r)" % (url.geturl(), reconstructed_netloc))
+            raise URLError("Bad location in URL %r (expected %r)" % (url.geturl(), reconstructed_netloc))
 
         self.cmd.extend(["--", ssh_netloc])
         #self.cmd.extend(["/bin/nc", "-U", "--", clean_path])
@@ -133,11 +138,11 @@ class SSHTransport(object):
         try:
             proc = subprocess.Popen(self.cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except OSError as exc:
-            raise urllib2.URLError("Calling %r failed (%s)!" % (' '.join(self.cmd), exc))
+            raise URLError("Calling %r failed (%s)!" % (' '.join(self.cmd), exc))
         else:
             stdout, stderr = proc.communicate(data)
             if proc.returncode:
-                raise urllib2.URLError("Calling %r failed with RC=%d!\n%s" % (
+                raise URLError("Calling %r failed with RC=%d!\n%s" % (
                    ' '.join(self.cmd), proc.returncode, stderr,
                 ))
             yield stdout
@@ -166,7 +171,7 @@ def transport_from_url(url):
             # Support simplified "domain:port" URLs
             return transport_from_url("scgi://%s:%s" % (url.scheme, url.path))
         else:
-            raise urllib2.URLError("Unsupported scheme in URL %r" % url.geturl())
+            raise URLError("Unsupported scheme in URL %r" % url.geturl())
     else:
         return transport(url)
 
