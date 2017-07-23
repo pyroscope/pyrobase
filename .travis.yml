@@ -1,17 +1,27 @@
 ---
 # https://docs.travis-ci.com/user/customizing-the-build/
 language: python
+
 python:
   - "2.6"
   - "2.7"
+  - "3.4"
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - python: "3.4"
+
 #before_install:
 # - sudo apt-get update -qq
 # - sudo apt-get install -qq python-apt python-pycurl
+
 install:
   - pip install -U pip no-manylinux1
   - pip install -U setuptools wheel
   - pip install -r requirements-dev.txt
   - paver bootstrap
   - pip install -e .
+
 script:
   - paver test
