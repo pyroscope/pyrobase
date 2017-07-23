@@ -60,6 +60,7 @@ project = dict(
 
     # dependencies
     install_requires = [
+        'six',
     ],
     setup_requires = [
     ],
