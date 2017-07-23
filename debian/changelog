@@ -1,3 +1,9 @@
+pyrobase (0.5.1) precise; urgency=low
+
+  * Removed support for Python 2.6
+
+ -- pyroscope <pyroscope.project@gmail.com>  Sun, 23 Jul 2017 15:45:53 +0200
+
 pyrobase (0.4.2) precise; urgency=low
 
   * fix: imgur upload code
