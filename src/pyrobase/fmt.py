@@ -21,6 +21,8 @@ import codecs
 import logging
 import datetime
 
+from six import string_types
+
 log = logging.getLogger(__name__)
 
 
@@ -30,7 +32,7 @@ def human_size(size):
         @param size: Number of bytes as an integer or string.
         @return: String of length 10 with the formatted result.
     """
-    if isinstance(size, basestring):
+    if isinstance(size, string_types):
         size = int(size, 10)
 
     if size < 0:
@@ -143,7 +145,7 @@ def to_utf8(text):
     """
     # return empty/false stuff unaltered
     if not text:
-        if isinstance(text, basestring):
+        if isinstance(text, string_types):
             text = ""
         return text
 
@@ -170,7 +172,7 @@ def to_utf8(text):
 
             try:
                 return text.decode(encoding).encode("utf8")
-            except UnicodeDecodeError, exc:
+            except UnicodeDecodeError as exc:
                 for line in text.splitlines():
                     try:
                         line.decode(encoding).encode("utf8")

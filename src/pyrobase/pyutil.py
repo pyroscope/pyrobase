@@ -33,5 +33,5 @@ def require_json():
         try:
             import simplejson # pylint: disable=F0401
             return simplejson
-        except ImportError, exc:
+        except ImportError as exc:
             raise ImportError("""Please 'pip install "simplejson>=2.1.6"' (%s)""" % (exc,))

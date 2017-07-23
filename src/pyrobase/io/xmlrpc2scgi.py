@@ -75,7 +75,7 @@ class LocalTransport(object):
         sock = socket.socket(*self.sock_args)
         try:
             sock.connect(self.sock_addr)
-        except socket.error, exc:
+        except socket.error as exc:
             raise socket.error("Can't connect to %r (%s)" % (self.url.geturl(), exc))
 
         try:
@@ -132,7 +132,7 @@ class SSHTransport(object):
         """
         try:
             proc = subprocess.Popen(self.cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        except OSError, exc:
+        except OSError as exc:
             raise urllib2.URLError("Calling %r failed (%s)!" % (' '.join(self.cmd), exc))
         else:
             stdout, stderr = proc.communicate(data)
@@ -202,7 +202,7 @@ def _parse_headers(headers):
             for line in headers.splitlines()
             if line
         )
-    except (TypeError, ValueError), exc:
+    except (TypeError, ValueError) as exc:
         raise SCGIException("Error in SCGI headers %r (%s)" % (headers, exc,))
 
 
@@ -212,7 +212,7 @@ def _parse_response(resp):
     # Assume they care for standards and send us CRLF (not just LF)
     try:
         headers, payload = resp.split("\r\n\r\n", 1)
-    except (TypeError, ValueError), exc:
+    except (TypeError, ValueError) as exc:
         raise SCGIException("No header delimiter in SCGI response of length %d (%s)" % (len(resp), exc,))
     headers = _parse_headers(headers)
 

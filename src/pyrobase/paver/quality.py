@@ -79,7 +79,7 @@ def lint():
             else:
                 subprocess.check_call(["pylint"] + argv, )
             sys.stderr.write("paver::lint - No problems found.\n")
-    except subprocess.CalledProcessError, exc:
+    except subprocess.CalledProcessError as exc:
         if exc.returncode & 32:
             # usage error (internal error in this code)
             sys.stderr.write("paver::lint - Usage error, bad arguments %r?!\n" % (argv,))

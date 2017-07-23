@@ -44,11 +44,11 @@ class BunchTest(unittest.TestCase):
         b = parts.Bunch()
         try:
             b.not_there
-        except AttributeError, exc:
+        except AttributeError as exc:
             assert "not_there" in str(exc)
         else:
             assert False, "Expected an exception"
-        
+
 
 if __name__ == "__main__":
     unittest.main()

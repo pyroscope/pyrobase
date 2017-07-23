@@ -20,6 +20,9 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+from six import string_types
+
+
 class BencodeError(ValueError):
     """ Error during decoding or encoding.
     """
@@ -122,7 +125,7 @@ class Encoder(object):
         """
         if isinstance(obj, (int, long, bool)):
             self.result.append("i%de" % obj)
-        elif isinstance(obj, basestring):
+        elif isinstance(obj, string_types):
             self.result.extend([str(len(obj)), ':', str(obj)])
         elif hasattr(obj, "__bencode__"):
             self.encode(obj.__bencode__())
@@ -138,7 +141,7 @@ class Encoder(object):
             # Treat as iterable
             try:
                 items = iter(obj)
-            except TypeError, exc:
+            except TypeError as exc:
                 raise BencodeError("Unsupported non-iterable object %r of type %s (%s)" % (
                     obj, type(obj), exc
                 ))
