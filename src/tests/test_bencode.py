@@ -21,7 +21,11 @@ from __future__ import with_statement
 
 import logging
 import unittest
-import StringIO
+
+try:
+    from io import BytesIO
+except ImportError:
+    from StringIO import StringIO as BytesIO
 
 from pyrobase.testing import mockedopen
 from pyrobase.bencode import * #@UnusedWildImport
@@ -31,7 +35,7 @@ log.trace("module loaded")
 
 
 class DecoderTest(unittest.TestCase):
-    
+
     def test_errors(self):
         testcases = (
             "",
@@ -68,10 +72,10 @@ class DecoderTest(unittest.TestCase):
 
     def test_values(self):
         testcases = (
-            ("i4e", 4L),
-            ("i0e", 0L),
-            ("i123456789e", 123456789L),
-            ("i-10e", -10L),
+            ("i4e", 4),
+            ("i0e", 0),
+            ("i123456789e", 123456789),
+            ("i-10e", -10),
             ("0:", ''),
             ("3:abc", "abc"),
             ("10:1234567890", "1234567890"),
@@ -92,21 +96,21 @@ class DecoderTest(unittest.TestCase):
         self.failUnlessEqual(bdecode("l1:\x801:\x81e", "cp1252"), [u"\u20ac", "\x81"])
 
     def test_bread_stream(self):
-        self.failUnlessEqual(bread(StringIO.StringIO("de")), {})
+        self.failUnlessEqual(bread(BytesIO(b"de")), {})
 
     def test_bread_file(self):
-        with mockedopen({"empty_dict": "de"}):
+        with mockedopen({"empty_dict": b"de"}):
             self.failUnlessEqual(bread("empty_dict"), {})
 
 
 class EncoderTest(unittest.TestCase):
-    
+
     def test_values(self):
         testcases = (
             (4, "i4e"),
             (0, "i0e"),
             (-10, "i-10e"),
-            (12345678901234567890L, "i12345678901234567890e"),
+            (12345678901234567890, "i12345678901234567890e"),
             ("", "0:"),
             ("abc", "3:abc"),
             ("1234567890", "10:1234567890"),
@@ -122,7 +126,7 @@ class EncoderTest(unittest.TestCase):
             self.failUnlessEqual(bencode(obj), result)
 
     def test_bwrite_stream(self):
-        data = StringIO.StringIO()
+        data = BytesIO()
         bwrite(data, {})
         self.failUnlessEqual(data.getvalue(), "de")
 
