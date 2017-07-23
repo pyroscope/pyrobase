@@ -19,9 +19,13 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 import time
 import socket
-import urllib2
 import logging
 import unittest
+
+try:
+    from urllib.error import URLError
+except ImportError:
+    from urllib2 import URLError
 
 from pyrobase.io import xmlrpc2scgi
 
@@ -52,7 +56,7 @@ class MockedTransport(object):
 class TransportTest(unittest.TestCase):
 
     def test_bad_url(self):
-        self.failUnlessRaises(urllib2.URLError, xmlrpc2scgi.transport_from_url, "xxxx:///")
+        self.failUnlessRaises(URLError, xmlrpc2scgi.transport_from_url, "xxxx:///")
 
     def test_local_transports(self):
         testcases = (
@@ -85,7 +89,7 @@ class TransportTest(unittest.TestCase):
         self.failUnless("-p" in xmlrpc2scgi.transport_from_url("scgi+ssh://localhost:5000/foo").cmd)
 
         # Errors
-        self.failUnlessRaises(urllib2.URLError, xmlrpc2scgi.transport_from_url, "scgi+ssh://localhost:5000")
+        self.failUnlessRaises(URLError, xmlrpc2scgi.transport_from_url, "scgi+ssh://localhost:5000")
 
 
 class HelperTest(unittest.TestCase):
