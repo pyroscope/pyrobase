@@ -71,7 +71,7 @@ class Decoder(object):
             if self.char_encoding:
                 try:
                     obj = obj.decode(self.char_encoding)
-                except UnicodeError:
+                except (UnicodeError, AttributeError):
                     # deliver non-decodable string (byte arrays) as-is
                     pass
         elif kind == 'i':
