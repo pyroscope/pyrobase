@@ -127,7 +127,7 @@ def to_unicode(text):
     """ Return a decoded unicode string.
         False values are returned untouched.
     """
-    if not text or isinstance(text, unicode):
+    if not text or isinstance(text, unicode if PY2 else str):
         return text
 
     try:
