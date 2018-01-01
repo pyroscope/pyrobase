@@ -22,9 +22,9 @@ import errno
 from contextlib import contextmanager
 
 try:
-    from io import StringIO
-except ImportError:
     from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 try:
     import mock

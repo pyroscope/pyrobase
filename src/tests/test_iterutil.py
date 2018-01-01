@@ -16,6 +16,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
+from __future__ import absolute_import, print_function, unicode_literals
+
 import logging
 import unittest
 
@@ -31,7 +33,7 @@ class IterUtilTest(unittest.TestCase):
         def yielding():
             yield 1
             yield (2, "3")
-            
+
         cases = [
             ([],                []),
             ((1, "2"),          [1, "2"]),
@@ -41,4 +43,3 @@ class IterUtilTest(unittest.TestCase):
         for val, expected in cases:
             result = list(iterutil.flatten(val))
             assert result == expected
-

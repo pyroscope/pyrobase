@@ -16,6 +16,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
+from __future__ import absolute_import, print_function, unicode_literals
+
 import time
 import logging
 import unittest
@@ -92,13 +94,13 @@ class FmtTest(unittest.TestCase):
             (u"", u""),
             (False, False),
             (None, None),
-            ("\xc3\xaa", u"\xea"),
-            ("\x80", u"\u20ac"),
-            ("\x81", "\x81"),
-            ("\x8d", "\x8d"),
-            ("\x8f", "\x8f"),
-            ("\x90", "\x90"),
-            ("\x9d", "\x9d"),
+            (b"\xc3\xaa", u"\xea"),
+            (b"\x80", u"\u20ac"),
+            (b"\x81", b"\x81"),
+            (b"\x8d", b"\x8d"),
+            (b"\x8f", b"\x8f"),
+            (b"\x90", b"\x90"),
+            (b"\x9d", b"\x9d"),
         ]
         for val, expected in cases:
             result = fmt.to_unicode(val)
@@ -110,9 +112,9 @@ class FmtTest(unittest.TestCase):
             (u"", u""),
             (False, False),
             (None, None),
-            (u"\xea", "\xc3\xaa",),
-            (u"\u20ac", "\xe2\x82\xac"),
-            ("\xc3\xaa", "\xc3\xaa"),
+            (u"\xea", b"\xc3\xaa",),
+            (u"\u20ac", b"\xe2\x82\xac"),
+            (b"\xc3\xaa", b"\xc3\xaa"),
             (b"\xfe\xff\x00\x20", u" "),
             (b"\xff\xfe\x20\x00", u" "),
             (b"\xef\xbb\xbf\x20", u" "),
@@ -128,7 +130,7 @@ class FmtTest(unittest.TestCase):
             (u"", b""),
             (u"\xea", b"\xc3\xaa",),
             (u"\u20ac", b"\xe2\x82\xac"),
-            ("\xc3\xaa", b"\xc3\xaa"),
+            (b"\xc3\xaa", b"\xc3\xaa"),
             (b"\xfe\xff\x00\x20", b"\xfe\xff\x00\x20"),
             (b"\xef\xbb\xbf\x20", b"\xef\xbb\xbf\x20"),
             (b"\xc3\xc3\x81", b"\xc3\xc3\x81"),
