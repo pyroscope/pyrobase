@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=too-few-public-methods
+# pylint: disable=too-few-public-methods,no-else-return
 """ XMLRPC via SCGI client proxy over various transports.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
@@ -162,7 +162,7 @@ def transport_from_url(url):
     """
     if '/' not in url and ':' in url and url.rsplit(':')[-1].isdigit():
         url = 'scgi://' + url
-    url = urlparse.urlsplit(url, "scgi", allow_fragments=False)
+    url = urlparse.urlsplit(url, scheme="scgi", allow_fragments=False)  # pylint: disable=redundant-keyword-arg
 
     try:
         transport = TRANSPORTS[url.scheme.lower()]

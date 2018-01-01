@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=too-few-public-methods
+# pylint: disable=too-few-public-methods,invalid-name
 """ Bencode support.
 
     Copyright (c) 2009-2017 The PyroScope Project <pyroscope.project@gmail.com>
@@ -87,7 +87,7 @@ class Decoder(object):
         elif kind == 'l':
             # List
             self.offset += 1
-            obj = []  # pylint: disable=redefined-variable-type
+            obj = []
             while self.data[self.offset:self.offset+1] != 'e':
                 obj.append(self.decode())
             self.offset += 1

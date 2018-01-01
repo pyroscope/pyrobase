@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=invalid-name,no-else-return
 """ Data Formatting.
 
     Copyright (c) 2009, 2011 The PyroScope Project <pyroscope.project@gmail.com>

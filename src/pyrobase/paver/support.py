@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=
+# pylint: disable=no-else-return
 """ Paver Task Implementation Helpers.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
@@ -25,7 +25,7 @@ from paver import easy, tasks
 from pyrobase import iterutil
 
 
-def venv_bin(name=None):
+def venv_bin(name=None):  # pylint: disable=inconsistent-return-statements
     """ Get the directory for virtualenv stubs, or a full executable path
         if C{name} is provided.
     """

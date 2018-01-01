@@ -91,7 +91,7 @@ def preparse(template_text, lookup=None):
             template = tempita.Template(template_text, name=template_path)
             template.__engine__ = "tempita"
         else:
-            template = InterpolationTemplate(template_text)  # pylint: disable=redefined-variable-type
+            template = InterpolationTemplate(template_text)
 
         template.__file__ = template_path
 

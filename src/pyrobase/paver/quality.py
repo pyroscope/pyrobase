@@ -36,8 +36,6 @@ from pyrobase.paver import support
 @support.task_requires("pylint>=1.4")
 def lint():
     "report pylint results"
-    from pylint import lint as linter # pylint: disable=W0404
-
     # report according to file extension
     report_formats = {
         ".html": "html",

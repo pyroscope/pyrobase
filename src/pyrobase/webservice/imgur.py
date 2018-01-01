@@ -35,8 +35,7 @@ except ImportError as _exc:
     raise ImportError("Please 'pip install \"pyrobase[imgur]\"' (%s)" % (_exc,))
 from imgurpython.helpers.error import ImgurClientError, ImgurClientRateLimitError
 
-from pyrobase import parts, pyutil, logutil, fmt
-from pyrobase.io import http
+from pyrobase import parts, pyutil
 
 json = pyutil.require_json()
 LOG = logging.getLogger(__name__)
@@ -98,7 +97,8 @@ class ImgurUploader(object): # pylint: disable=R0903
         # Upload image
         # XXX "name",    name or hashlib.md5(str(image)).hexdigest()),
         client = ImgurClient(self.client_id, self.client_secret)
-        result = (client.upload_from_url if image_type == 'url' else client.upload_from_path)(image_data)  # XXX config=None, anon=True)
+        result = (client.upload_from_url if image_type == 'url'
+                  else client.upload_from_path)(image_data)  # XXX config=None, anon=True)
 
         if result['link'].startswith('http:'):
             result['link'] = 'https:' + result['link'][5:]
