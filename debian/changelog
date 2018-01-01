@@ -1,3 +1,9 @@
+pyrobase (0.5.2) precise; urgency=low
+
+  * Fix: Keep unicode/str type in shell_escape()
+
+ -- pyroscope <pyroscope.project@gmail.com>  Mon, 01 Jan 2018 14:03:46 +0100
+
 pyrobase (0.5.1) precise; urgency=low
 
   * Removed support for Python 2.6

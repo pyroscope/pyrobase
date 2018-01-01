@@ -33,6 +33,9 @@ class OsUtilTest(unittest.TestCase):
             ("!bang",       "'!bang'"),
             ("d\"q",        "'d\"q'"),
             ("s'q",         r"'s'\''q'"),
+            (b"abc",        b"abc"),
+            (b"!bang",      b"'!bang'"),
+            (b"\xA0",       b"'\xA0'"),
         ]
         for val, expected in cases:
             result = osutil.shell_escape(val)
