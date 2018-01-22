@@ -21,10 +21,11 @@
 import os
 import sys
 import time
-import httplib
-import urlparse
-import StringIO
 import mimetypes
+
+from six.moves import http_client as httplib
+from six.moves import urllib
+from six import StringIO
 
 from pyrobase import fmt, parts
 
@@ -65,7 +66,7 @@ class HttpPost(object):
         """ Post fields and files to an HTTP server as multipart/form-data.
             Return the server's response.
         """
-        scheme, location, path, query, _ = urlparse.urlsplit(self.url)
+        scheme, location, path, query, _ = urllib.parse.urlsplit(self.url)
         assert scheme in ("http", "https"), "Unsupported scheme %r" % scheme
 
         content_type, body = self._encode_multipart_formdata()
@@ -84,7 +85,7 @@ class HttpPost(object):
                 close=lambda: None,
             )
 
-        handle.putrequest('POST', urlparse.urlunsplit(('', '', path, query, '')))
+        handle.putrequest('POST', urllib.parse.urlunsplit(('', '', path, query, '')))
         handle.putheader('Content-Type', content_type)
         handle.putheader('Content-Length', str(len(body)))
         for key, val in self.headers.items():

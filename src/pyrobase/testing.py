@@ -22,16 +22,11 @@ import errno
 from contextlib import contextmanager
 
 try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
-
-try:
     import mock
 except ImportError:
     from unittest import mock
 
-from six import PY2
+from six import PY2, StringIO, BytesIO
 
 
 class DictItemIO(StringIO):
@@ -45,21 +40,36 @@ class DictItemIO(StringIO):
         self.namespace[self.key] = self
         StringIO.__init__(self, buf)
 
-
     def close(self):
         self.namespace[self.key] = self.getvalue()
         StringIO.close(self)
 
 
+class DictItemBytesIO(BytesIO):
+    """ BytesIO that replaces itself in a dict on close.
+    """
+
+    def __init__(self, namespace, key, buf=b''):
+        self.namespace = namespace
+        self.key = key
+
+        self.namespace[self.key] = self
+        BytesIO.__init__(self, buf)
+
+    def close(self):
+        self.namespace[self.key] = self.getvalue()
+        BytesIO.close(self)
+
+
 @contextmanager
-def mockedopen(fakefiles=None):
+def mockedopen(fakefiles=None, mode=None):
     """ Mock the open call to use a dict as the file system.
 
         @param fakefiles: Prepopulated filesystem, this is passed on as the context's target.
     """
     fakefiles = fakefiles or {}
 
-    def mock_open(name, mode=None, buffering=None): # pylint: disable=W0613
+    def mock_open(name, mode=mode, buffering=None): # pylint: disable=W0613
         "Helper"
         mode = mode or "r"
         if mode.startswith('r'):
@@ -70,6 +80,8 @@ def mockedopen(fakefiles=None):
             except AttributeError:
                 pass
             return StringIO(fakefiles[name])
+        elif mode.endswith('b'):
+            return DictItemBytesIO(fakefiles, name)
         else:
             return DictItemIO(fakefiles, name)
 

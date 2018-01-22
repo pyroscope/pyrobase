@@ -22,6 +22,8 @@ from __future__ import with_statement
 import os
 from contextlib import closing
 
+import six
+
 
 class InterpolationTemplate(object):
     """ Simple string interpolation.
@@ -31,7 +33,7 @@ class InterpolationTemplate(object):
         """ Create template ADT wrapper object.
         """
         try:
-            self.fmt = unicode(fmt, 'utf-8')
+            self.fmt = six.text_type(fmt, 'utf-8')
         except (TypeError, UnicodeDecodeError):
             self.fmt = fmt
         self.mapping = mapping or (lambda _: _)

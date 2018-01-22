@@ -20,9 +20,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from six import string_types, PY2
-
-int_like_types = (int, long, bool) if PY2 else  (int, bool)
+from six import string_types, text_type, binary_type, integer_types
 
 
 class BencodeError(ValueError):
@@ -34,10 +32,13 @@ class Decoder(object):
     """ Decode a string or stream to an object.
     """
 
-    def __init__(self, data, char_encoding=None):
+    def __init__(self, data, char_encoding='utf-8'):
         """ Initialize encoder.
         """
-        self.data = data
+        if isinstance(data, text_type):
+            self.data = data.encode(char_encoding)
+        else:
+            self.data = data
         self.offset = 0
         self.char_encoding = char_encoding
 
@@ -49,16 +50,16 @@ class Decoder(object):
             @raise BencodeError: Invalid data.
         """
         try:
-            kind = self.data[self.offset]
+            kind = self.data[self.offset:self.offset+1]
         except IndexError:
             raise BencodeError("Unexpected end of data at offset %d/%d" % (
                 self.offset, len(self.data),
             ))
 
-        if kind.isdigit():
+        if b'0' <= kind <= b'9':
             # String
             try:
-                end = self.data.find(':', self.offset)
+                end = self.data.find(b':', self.offset)
                 length = int(self.data[self.offset:end], 10)
             except (ValueError, TypeError):
                 raise BencodeError("Bad string length at offset %d (%r...)" % (
@@ -74,28 +75,28 @@ class Decoder(object):
                 except (UnicodeError, AttributeError):
                     # deliver non-decodable string (byte arrays) as-is
                     pass
-        elif kind == 'i':
+        elif kind == b'i':
             # Integer
             try:
-                end = self.data.find('e', self.offset+1)
+                end = self.data.find(b'e', self.offset+1)
                 obj = int(self.data[self.offset+1:end], 10)
             except (ValueError, TypeError):
                 raise BencodeError("Bad integer at offset %d (%r...)" % (
                     self.offset, self.data[self.offset:self.offset+32]
                 ))
             self.offset = end+1
-        elif kind == 'l':
+        elif kind == b'l':
             # List
             self.offset += 1
             obj = []
-            while self.data[self.offset:self.offset+1] != 'e':
+            while self.data[self.offset:self.offset+1] != b'e':
                 obj.append(self.decode())
             self.offset += 1
-        elif kind == 'd':
+        elif kind == b'd':
             # Dict
             self.offset += 1
             obj = {}
-            while self.data[self.offset:self.offset+1] != 'e':
+            while self.data[self.offset:self.offset+1] != b'e':
                 key = self.decode()
                 obj[key] = self.decode()
             self.offset += 1
@@ -112,32 +113,46 @@ class Decoder(object):
         return obj
 
 
+
 class Encoder(object):
     """ Encode a given object to a string or stream.
     """
 
-    def __init__(self):
+    def __init__(self, char_encoding='utf-8'):
         """ Initialize encoder.
         """
         self.result = []
+        self.char_encoding = char_encoding
 
     def encode(self, obj):
         """ Add the given object to the result.
         """
-        if isinstance(obj, int_like_types):
-            self.result.append("i%de" % obj)
+        if isinstance(obj, bool):
+            self.result.extend(b"i1e" if obj else b"i0e")
+        elif isinstance(obj, integer_types):
+            self.result.extend([b"i", text_type(obj).encode(self.char_encoding), b"e"])
         elif isinstance(obj, string_types):
-            self.result.extend([str(len(obj)), ':', str(obj)])
+            if isinstance(obj, text_type):
+                obj = obj.encode(self.char_encoding)
+            self.result.extend([str(len(obj)).encode(self.char_encoding), b':', obj])
+        elif isinstance(obj, binary_type):
+            # Previous check catches py2's str
+            self.result.extend([str(len(obj)).encode(self.char_encoding), b':', obj])
         elif hasattr(obj, "__bencode__"):
             self.encode(obj.__bencode__())
         elif hasattr(obj, "items"):
             # Dictionary
-            self.result.append('d')
+            self.result.append(b'd')
             for key, val in sorted(obj.items()):
-                key = str(key)
-                self.result.extend([str(len(key)), ':', key])
+                if isinstance(key, integer_types):
+                    key = text_type(key).encode(self.char_encoding)
+                if not isinstance(key, string_types + (binary_type,)):
+                    raise BencodeError("Dict key must be bytestring, found '%s'" % key)
+                if isinstance(key, text_type):
+                    key = key.encode(self.char_encoding)
+                self.result.extend([str(len(key)).encode(self.char_encoding), b':', key])
                 self.encode(val)
-            self.result.append('e')
+            self.result.append(b'e')
         else:
             # Treat as iterable
             try:
@@ -147,24 +162,24 @@ class Encoder(object):
                     obj, type(obj), exc
                 ))
             else:
-                self.result.append('l')
+                self.result.append(b'l')
                 for item in items:
                     self.encode(item)
-                self.result.append('e')
+                self.result.append(b'e')
 
         return self.result
 
 
-def bdecode(data, char_encoding=None):
+def bdecode(data, char_encoding='utf-8'):
     """ Decode a string or stream to an object.
     """
     return Decoder(data, char_encoding).decode(check_trailer=True)
 
 
-def bencode(obj):
-    """ Encode a given object to a string.
+def bencode(obj, char_encoding='utf-8'):
+    """ Encode a given object to data.
     """
-    return ''.join(Encoder().encode(obj))
+    return b''.join(Encoder(char_encoding).encode(obj))
 
 
 def bread(stream):
