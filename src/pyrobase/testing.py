@@ -60,7 +60,7 @@ class DictItemBytesIO(BytesIO):
 
 
 @contextmanager
-def mockedopen(fakefiles=None):
+def mockedopen(fakefiles=None, mode=''):
     """ Mock the open call to use a dict as the file system.
 
         @param fakefiles: Prepopulated filesystem, this is passed on as the context's target.
