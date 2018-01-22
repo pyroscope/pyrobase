@@ -24,7 +24,6 @@ import sys
 import time
 import socket
 import hashlib
-import httplib
 import logging
 from contextlib import closing
 
@@ -34,6 +33,8 @@ try:
 except ImportError as _exc:
     raise ImportError("Please 'pip install \"pyrobase[imgur]\"' (%s)" % (_exc,))
 from imgurpython.helpers.error import ImgurClientError, ImgurClientRateLimitError
+
+from six.moves import http_client as httplib
 
 from pyrobase import parts, pyutil
 

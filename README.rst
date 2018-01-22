@@ -1,7 +1,9 @@
 pyrobase
 ========
 
-*General Python Helpers and Utilities.*  |Travis CI|  |Issues|  |PyPI|
+|Travis CI|  |Issues|  |PyPI|
+
+*General Python Helpers and Utilities.*
 
 .. contents:: **Contents**
 

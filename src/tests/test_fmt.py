@@ -108,16 +108,16 @@ class FmtTest(unittest.TestCase):
 
     def test_to_utf8(self):
         cases = [
-            ("", ""),
-            (u"", u""),
+            ("", b""),
+            (u"", b""),
             (False, False),
             (None, None),
             (u"\xea", b"\xc3\xaa",),
             (u"\u20ac", b"\xe2\x82\xac"),
             (b"\xc3\xaa", b"\xc3\xaa"),
-            (b"\xfe\xff\x00\x20", u" "),
-            (b"\xff\xfe\x20\x00", u" "),
-            (b"\xef\xbb\xbf\x20", u" "),
+            (b"\xfe\xff\x00\x20", b" "),
+            (b"\xff\xfe\x20\x00", b" "),
+            (b"\xef\xbb\xbf\x20", b" "),
             #(b"\xc3\xc3\x81".decode('cp1252'), "\xc3\xc3\x81"),
         ]
         for val, expected in cases:

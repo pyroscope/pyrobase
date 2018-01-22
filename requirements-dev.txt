@@ -2,7 +2,6 @@
 Paver==1.2.4
 Tempita==0.5.2
 epydoc==3.0.1
-bpython==0.16
 pylint==1.8.1
 tox==2.9.1
 mock==2.0.0

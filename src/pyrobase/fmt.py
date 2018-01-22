@@ -22,10 +22,8 @@ import codecs
 import logging
 import datetime
 
-from six import string_types, PY2
+from six import string_types, binary_type, text_type
 
-byte_types = (str, bytes) if PY2 else (bytes,)
-unicode_type = unicode if PY2 else str
 log = logging.getLogger(__name__)
 
 
@@ -128,7 +126,7 @@ def to_unicode(text):
     """ Return a decoded unicode string.
         False values are returned untouched.
     """
-    if not text or isinstance(text, unicode if PY2 else str):
+    if not text or isinstance(text, text_type):
         return text
 
     try:
@@ -149,13 +147,13 @@ def to_utf8(text):
     # return empty/false stuff unaltered
     if not text:
         if isinstance(text, string_types):
-            text = ""
+            text = b""
         return text
 
     try:
         # Is it a unicode string, or pure ascii?
         return text.encode("utf8")
-    except UnicodeDecodeError:
+    except (UnicodeDecodeError, AttributeError):
         try:
             # Is it a utf8 byte string?
             if text.startswith(codecs.BOM_UTF8):
@@ -188,9 +186,9 @@ def to_utf8(text):
 def to_console(text):
     """ Return a byte string intended for console output.
     """
-    if isinstance(text, byte_types):
+    if isinstance(text, binary_type):
         # For now, leave byte strings as-is (ignoring possible display problems)
         return text
 
     # Convert other stuff into an UTF-8 string
-    return unicode_type(text).encode("utf8")
+    return text_type(text).encode("utf8")
