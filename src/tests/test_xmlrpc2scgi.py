@@ -43,15 +43,15 @@ class MockedTransport(object):
     def send(self, data):
         time.sleep(.01)
         xml = (
-            '<?xml version="1.0" encoding="UTF-8"?>'
-            '<methodResponse><params>'
-            '<param><value><string><![CDATA[%r]]]]></string></value></param>'
-            '</params></methodResponse>' % data
+            b'<?xml version="1.0" encoding="UTF-8"?>'
+            b'<methodResponse><params>'
+            b'<param><value><string><![CDATA[%r]]></string></value></param>'
+            b'</params></methodResponse>' % data
         )
         return (
-            'Content-Length: %d\r\n'
-            '\r\n'
-            '%s' % (len(xml), xml)
+            b'Content-Length: %d\r\n'
+            b'\r\n'
+            b'%s' % (len(xml), xml)
         )
 
 
@@ -98,8 +98,8 @@ class HelperTest(unittest.TestCase):
 
     def test_encode_netstring(self):
         testcases = (
-            ("", "0:,"),
-            ("a", "1:a,"),
+            (b"", b"0:,"),
+            (b"a", b"1:a,"),
             #(u"\u20ac", "3:\xe2\x82\xac,"),
         )
         for data, expected in testcases:
@@ -107,32 +107,32 @@ class HelperTest(unittest.TestCase):
 
     def test_encode_headers(self):
         testcases = (
-            ((), ""),
-            ((("a", "b"),), "a\0b\0"),
+            ((), b""),
+            ((("a", "b"),), b"a\0b\0"),
         )
         for data, expected in testcases:
             self.failUnlessEqual(xmlrpc2scgi._encode_headers(data), expected)
 
     def test_encode_payload(self):
         testcases = (
-            ("", "24:%s," % '\0'.join(["CONTENT_LENGTH", "0", "SCGI", "1", ""])),
-            ("*"*10, "25:%s," % '\0'.join(["CONTENT_LENGTH", "10", "SCGI", "1", ""]) + "*"*10),
+            (b"", b"24:%s," % b'\0'.join([b"CONTENT_LENGTH", b"0", b"SCGI", b"1", b""])),
+            (b"*"*10, b"25:%s," % b'\0'.join([b"CONTENT_LENGTH", b"10", b"SCGI", b"1", b""]) + b"*"*10),
         )
         for data, expected in testcases:
             self.failUnlessEqual(xmlrpc2scgi._encode_payload(data), expected)
 
     def test_parse_headers(self):
         testcases = (
-            ("", {}),
-            ("a: b\nc: d\n\n", dict(a="b", c="d")),
+            (b"", {}),
+            (b"a: b\nc: d\n\n", dict(a="b", c="d")),
         )
         for data, expected in testcases:
             self.failUnlessEqual(xmlrpc2scgi._parse_headers(data), expected)
 
     def test_parse_response(self):
-        data = "Content-Length: 10\r\n\r\n" + "*"*10
+        data = b"Content-Length: 10\r\n\r\n" + b"*"*10
         payload, headers = xmlrpc2scgi._parse_response(data)
-        self.failUnlessEqual(payload, "*"*10)
+        self.failUnlessEqual(payload, b"*"*10)
         self.failUnlessEqual(headers, {"Content-Length": "10"})
 
 
@@ -144,17 +144,19 @@ class SCGIRequestTest(unittest.TestCase):
         self.failUnless(r1.transport is r2.transport)
 
     def test_send(self):
-        req = xmlrpc2scgi.SCGIRequest(MockedTransport("foo"))
-        resp = req.send("bar")
+        req = xmlrpc2scgi.SCGIRequest(MockedTransport(b"foo"))
+        resp = req.send(b"bar")
         bad = "Bad response %r" % resp
-        self.failUnless(resp.startswith("<?xml "), bad)
-        self.failUnless("bar" in resp, bad)
+        self.failUnless(resp.startswith(b"<?xml "), bad)
+        self.failUnless(b"bar" in resp, bad)
         self.failIf(req.latency == 0, "Latency cannot be zero")
 
     def test_scgi_request(self):
         resp = xmlrpc2scgi.scgi_request(MockedTransport("foo"), "bar", "baz")
         bad = "Bad response %s" % resp
-        self.failUnless(resp.startswith('"26:CONTENT_LENGTH'), bad)
+        print(type(resp))
+        print(resp)
+        self.failUnless(resp.startswith('b"26:CONTENT_LENGTH'), bad)
         self.failUnless("<methodName>bar</methodName>" in resp, bad)
         self.failUnless("<value><string>baz</string></value>" in resp, bad)
 

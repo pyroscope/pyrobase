@@ -181,19 +181,19 @@ def transport_from_url(url):
 # See spec at http://python.ca/scgi/protocol.txt
 #
 
-def _encode_netstring(text):
-    "Encode text as netstring."
-    return "%d:%s," % (len(text), text)
+def _encode_netstring(data):
+    "Encode data as netstring."
+    return b"%d:%s," % (len(data), data)
 
 
 def _encode_headers(headers):
     "Make SCGI header bytes from list of tuples."
-    return ''.join(['%s\0%s\0' % i for i in headers])
+    return b''.join([b'%s\0%s\0' % (k.encode('ascii'), v.encode('ascii')) for k, v in headers])
 
 
 def _encode_payload(data, headers=None):
     "Wrap data in an SCGI request."
-    prolog = "CONTENT_LENGTH\0%d\0SCGI\x001\0" % len(data)
+    prolog = b"CONTENT_LENGTH\0%d\0SCGI\x001\0" % len(data)
     if headers:
         prolog += _encode_headers(headers)
 
@@ -201,22 +201,36 @@ def _encode_payload(data, headers=None):
 
 
 def _parse_headers(headers):
-    "Get headers dict from header string."
+    """
+    Get headers dict from header bytestring.
+
+    :param headers: An SCGI header bytestring
+    :type headers: bytes
+    :return: A dictionary of string keys/values
+    """
     try:
-        return dict(line.rstrip().split(": ", 1)
-            for line in headers.splitlines()
-            if line
-        )
+        result = {}
+        for line in headers.splitlines():
+            if line:
+                k, v = line.rstrip().split(b": ", 1)
+                result[k.decode('ascii')] = v.decode('ascii')
+        return result
     except (TypeError, ValueError) as exc:
-        raise SCGIException("Error in SCGI headers %r (%s)" % (headers, exc,))
+        raise SCGIException("Error in SCGI headers %r (%s)" % (headers.decode(), exc,))
 
 
 def _parse_response(resp):
-    """ Get xmlrpc response from scgi response
     """
+    Get xmlrpc response from scgi response
+
+    :param headers: An SCGI bytestring payload
+    :type headers: bytes
+    :return: A tuple of a binary payload and a dictionary of string keys/values
+    """
+
     # Assume they care for standards and send us CRLF (not just LF)
     try:
-        headers, payload = resp.split("\r\n\r\n", 1)
+        headers, payload = resp.split(b"\r\n\r\n", 1)
     except (TypeError, ValueError) as exc:
         raise SCGIException("No header delimiter in SCGI response of length %d (%s)" % (len(resp), exc,))
     headers = _parse_headers(headers)
@@ -255,10 +269,14 @@ class SCGIRequest(object):
 
     def send(self, data):
         """ Send data over scgi to URL and get response.
+
+        :param data: The bytestring to send
+        :type data: bytes
+        :return: Response bytestring
         """
         start = time.time()
         try:
-            scgi_resp = ''.join(self.transport.send(_encode_payload(data)))
+            scgi_resp = b''.join(self.transport.send(_encode_payload(data)))
         finally:
             self.latency = time.time() - start
 
@@ -269,14 +287,18 @@ class SCGIRequest(object):
 def scgi_request(url, methodname, *params, **kw):
     """ Send a XMLRPC request over SCGI to the given URL.
 
-        @param url: Endpoint URL.
-        @param methodname: XMLRPC method name.
-        @param params: Tuple of simple python objects.
-        @keyword deserialize: Parse XML result? (default is True)
-        @return: XMLRPC response, or the equivalent Python data.
+        :param url: Endpoint URL.
+        :param methodname: XMLRPC method name.
+        :param params: Tuple of simple python objects.
+        :type url: string
+        :type methodname: string
+        :keyword deserialize: Parse XML result? (default is True)
+        :return: XMLRPC string response, or the equivalent Python data.
     """
     xmlreq = xmlrpclib.dumps(params, methodname)
-    xmlresp = SCGIRequest(url).send(xmlreq)
+    print(xmlreq)
+    xmlresp = SCGIRequest(url).send(xmlreq.encode()).decode()
+    print(xmlresp)
 
     if kw.get("deserialize", True):
         # This fixes a bug with the Python xmlrpclib module
