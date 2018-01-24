@@ -21,6 +21,7 @@ import time
 import codecs
 import logging
 import datetime
+from pprint import pformat
 
 from six import string_types, binary_type, text_type
 
@@ -192,3 +193,15 @@ def to_console(text):
 
     # Convert other stuff into an UTF-8 string
     return text_type(text).encode("utf8")
+
+
+def xmlrpc_result_to_string(result, pretty=False):
+    if pretty:
+        # Pretty-print if requested, or it's a collection and not a scalar
+        return pformat(result)
+    elif isinstance(result, string_types):
+        return result
+    elif hasattr(result, "__iter__") and not isinstance(result, binary_type):
+        return '\n'.join(i if isinstance(i, text_type) else pformat(i) for i in result)
+    else:
+        return repr(result)
