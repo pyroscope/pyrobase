@@ -296,9 +296,7 @@ def scgi_request(url, methodname, *params, **kw):
         :return: XMLRPC string response, or the equivalent Python data.
     """
     xmlreq = xmlrpclib.dumps(params, methodname)
-    print(xmlreq)
     xmlresp = SCGIRequest(url).send(xmlreq.encode()).decode()
-    print(xmlresp)
 
     if kw.get("deserialize", True):
         # This fixes a bug with the Python xmlrpclib module
