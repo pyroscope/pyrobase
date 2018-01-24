@@ -139,6 +139,24 @@ class FmtTest(unittest.TestCase):
             result = fmt.to_console(val)
             assert result == expected
 
+    def test_xmlrpc_result_to_string(self):
+        cases = [
+            (b"test", "b'test'"),
+            ("test", "test"),
+            (600, "600"),
+            ([[1]], "[1]"),
+            ([[1],[2]], "[1]\n[2]"),
+        ]
+        repr_cases = [
+            (b"test", "b'test'"),
+            ("test", "'test'"),
+            (600, "600"),
+            ([[1]], "[[1]]"),
+            ([[1],[2]], "[[1][2]]"),
+        ]
+        for val, expected in cases:
+            result = fmt.xmlrpc_result_to_string(val)
+            assert result == expected
 
 if __name__ == "__main__":
     unittest.main()
