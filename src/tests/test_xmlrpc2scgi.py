@@ -156,10 +156,10 @@ class SCGIRequestTest(unittest.TestCase):
     def test_scgi_request(self):
         resp = xmlrpc2scgi.scgi_request(MockedTransport("foo"), "bar", "baz")
         bad = "Bad response %s" % resp
-        if six.PY3:
-            self.failUnless(resp.startswith('b"26:CONTENT_LENGTH'), bad)
-        else:
+        if six.PY2:
             self.failUnless(resp.startswith('"26:CONTENT_LENGTH'), bad)
+        else:
+            self.failUnless(resp.startswith('b"26:CONTENT_LENGTH'), bad)
         self.failUnless("<methodName>bar</methodName>" in resp, bad)
         self.failUnless("<value><string>baz</string></value>" in resp, bad)
 
