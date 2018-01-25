@@ -141,21 +141,24 @@ class FmtTest(unittest.TestCase):
 
     def test_xmlrpc_result_to_string(self):
         cases = [
-            (b"test", "b'test'"),
-            ("test", "test"),
-            (600, "600"),
-            ([[1]], "[1]"),
-            ([[1],[2]], "[1]\n[2]"),
+            (b"test", u"test"),
+            (u"test", u"test"),
+            (600, u"600"),
+            ([[1]], u"[1]"),
+            ([[1],[2]], u"[1]\n[2]"),
         ]
         repr_cases = [
-            (b"test", "b'test'"),
-            ("test", "'test'"),
-            (600, "600"),
-            ([[1]], "[[1]]"),
-            ([[1],[2]], "[[1][2]]"),
+            (b"test", u"'test'"),
+            (u"test", u"'test'"),
+            (600, u"600"),
+            ([[1]], u"[[1]]"),
+            ([[1],[2]], u"[[1], [2]]"),
         ]
         for val, expected in cases:
             result = fmt.xmlrpc_result_to_string(val)
+            assert result == expected
+        for val, expected in repr_cases:
+            result = fmt.xmlrpc_result_to_string(val, pretty=True)
             assert result == expected
 
 if __name__ == "__main__":

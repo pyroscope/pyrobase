@@ -23,7 +23,7 @@ import logging
 import datetime
 from pprint import pformat
 
-from six import string_types, binary_type, text_type
+from six import PY3, PY2, string_types, binary_type, text_type
 
 log = logging.getLogger(__name__)
 
@@ -196,12 +196,19 @@ def to_console(text):
 
 
 def xmlrpc_result_to_string(result, pretty=False):
+    # Unicode will get pformatted with a 'u' prefix on 2
+    if PY2 and isinstance(result, unicode):
+        result = result.encode()
+    # Bytes will get pformatted with a 'b' prefix on 3
+    elif PY3 and isinstance(result, binary_type):
+        result = result.decode()
+
     if pretty:
         # Pretty-print if requested, or it's a collection and not a scalar
         return pformat(result)
-    elif isinstance(result, string_types):
-        return result
-    elif hasattr(result, "__iter__") and not isinstance(result, binary_type):
+    elif isinstance(result, string_types) or isinstance(result, binary_type):
+        return to_unicode(result)
+    elif hasattr(result, "__iter__"):
         return '\n'.join(i if isinstance(i, text_type) else pformat(i) for i in result)
     else:
         return repr(result)
