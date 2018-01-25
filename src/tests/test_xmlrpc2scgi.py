@@ -29,6 +29,8 @@ try:
 except ImportError:
     from urllib2 import URLError
 
+import six
+
 from pyrobase.io import xmlrpc2scgi
 
 log = logging.getLogger(__name__)
@@ -49,9 +51,9 @@ class MockedTransport(object):
             b'</params></methodResponse>' % data
         )
         return (
-            b'Content-Length: %d\r\n'
-            b'\r\n'
-            b'%s' % (len(xml), xml)
+            b'Content-Length: %d\r\n' % len(xml),
+            b'\r\n',
+            b'%s' % xml
         )
 
 
@@ -154,7 +156,10 @@ class SCGIRequestTest(unittest.TestCase):
     def test_scgi_request(self):
         resp = xmlrpc2scgi.scgi_request(MockedTransport("foo"), "bar", "baz")
         bad = "Bad response %s" % resp
-        self.failUnless(resp.startswith('b"26:CONTENT_LENGTH'), bad)
+        if six.PY3:
+            self.failUnless(resp.startswith('b"26:CONTENT_LENGTH'), bad)
+        else:
+            self.failUnless(resp.startswith('"26:CONTENT_LENGTH'), bad)
         self.failUnless("<methodName>bar</methodName>" in resp, bad)
         self.failUnless("<value><string>baz</string></value>" in resp, bad)
 
