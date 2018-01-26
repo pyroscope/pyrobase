@@ -139,6 +139,24 @@ class FmtTest(unittest.TestCase):
             result = fmt.to_console(val)
             assert result == expected
 
+    def test_convert_strings_in_iter(self):
+        # string prefixs are intentionally left out of the expect,
+        # to match str in both python 2 and 3
+        cases = [
+            (
+                {'one': b'two', u'three': 45},
+                {'one': 'two', 'three': 45},
+            ),
+            (
+                {'one': b'two', u'three': [b'four', {u'five': b'six'}]},
+                {'one': 'two', 'three': ['four', {'five': 'six'}]}
+            )
+        ]
+
+        for val, expected in cases:
+            result = fmt.convert_strings_in_iter(val)
+            assert result == expected
+
     def test_xmlrpc_result_to_string(self):
         cases = [
             (b"test", u"test"),
@@ -146,6 +164,7 @@ class FmtTest(unittest.TestCase):
             (600, u"600"),
             ([[1]], u"[1]"),
             ([[1],[2]], u"[1]\n[2]"),
+            ([['test']], u"['test']")
         ]
         repr_cases = [
             (b"test", u"'test'"),
@@ -153,6 +172,7 @@ class FmtTest(unittest.TestCase):
             (600, u"600"),
             ([[1]], u"[[1]]"),
             ([[1],[2]], u"[[1], [2]]"),
+            ([['test']], u"[['test']]")
         ]
         for val, expected in cases:
             result = fmt.xmlrpc_result_to_string(val)

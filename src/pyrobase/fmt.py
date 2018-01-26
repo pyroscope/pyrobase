@@ -195,13 +195,24 @@ def to_console(text):
     return text_type(text).encode("utf8")
 
 
-def xmlrpc_result_to_string(result, pretty=False):
+def convert_strings_in_iter(obj):
     # Unicode will get pformatted with a 'u' prefix on 2
-    if PY2 and isinstance(result, unicode):
-        result = result.encode()
+    if PY2 and isinstance(obj, unicode):
+        obj = obj.encode("utf8")
     # Bytes will get pformatted with a 'b' prefix on 3
-    elif not PY2 and isinstance(result, binary_type):
-        result = result.decode()
+    elif not PY2 and isinstance(obj, binary_type):
+        obj = obj.decode()
+    elif isinstance(obj, dict):
+        for k, v in obj.items():
+            obj[convert_strings_in_iter(k)] = convert_strings_in_iter(v)
+    elif isinstance(obj, list):
+        for k, v in enumerate(obj):
+            obj[k] = convert_strings_in_iter(v)
+    return obj
+
+
+def xmlrpc_result_to_string(result, pretty=False):
+    result = convert_strings_in_iter(result)
 
     if pretty:
         # Pretty-print if requested, or it's a collection and not a scalar
