@@ -164,6 +164,7 @@ class FmtTest(unittest.TestCase):
             (600, u"600"),
             ([[1]], u"[1]"),
             ([[1],[2]], u"[1]\n[2]"),
+            (['test','test2'], u"test\ntest2"),
             ([['test']], u"['test']")
         ]
         repr_cases = [
@@ -172,7 +173,8 @@ class FmtTest(unittest.TestCase):
             (600, u"600"),
             ([[1]], u"[[1]]"),
             ([[1],[2]], u"[[1], [2]]"),
-            ([['test']], u"[['test']]")
+            ([['test'],['test2']], u"[['test'], ['test2']]"),
+            ([['test']], u"[['test']]"),
         ]
         for val, expected in cases:
             result = fmt.xmlrpc_result_to_string(val)
