@@ -67,9 +67,7 @@ class LocalTransport(object):
             self.sock_addr = addrinfo[0][4]
         else:
             # UNIX domain socket
-            path = url.path
-            if path.startswith("/~"):
-                path = os.path.expanduser(path)
+            path = os.path.expanduser(url.path)
             self.sock_args = (socket.AF_UNIX, socket.SOCK_STREAM)
             self.sock_addr = os.path.abspath(path)
 

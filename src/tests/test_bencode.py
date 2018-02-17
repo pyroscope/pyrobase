@@ -64,6 +64,7 @@ class DecoderTest(unittest.TestCase):
             b"l0:",
             b"d0:0:",
             b"d0:",
+            b"10:45646",
         )
         for testcase in testcases:
             #print testcase
@@ -79,6 +80,7 @@ class DecoderTest(unittest.TestCase):
             (b"0:", ''),
             (b"3:abc", "abc"),
             (b"10:1234567890", "1234567890"),
+            (u"10:1234567890", "1234567890"),
             (b"le", []),
             (b"l0:0:0:e", ['', '', '']),
             (b"li1ei2ei3ee", [1, 2, 3]),
@@ -108,12 +110,19 @@ class EncoderTest(unittest.TestCase):
     def test_errors(self):
         testcases = (
             ({1: b"foo"}, b"d1:13:fooe"),
+            (object, "")
         )
         for testcase in testcases:
             #print testcase
             self.failUnlessRaises(BencodeError, bencode, testcase)
 
     def test_values(self):
+        class MockBenObj(object):
+            def __init__(self, num):
+                self.num = num
+            def __bencode__(self):
+                return "MockBenObj-{}".format(self.num)
+
         testcases = (
             (4, b"i4e"),
             (0, b"i0e"),
@@ -121,15 +130,20 @@ class EncoderTest(unittest.TestCase):
             (12345678901234567890, b"i12345678901234567890e"),
             (b"", b"0:"),
             (b"abc", b"3:abc"),
+            (u"abc", b"3:abc"),
             (b"1234567890", b"10:1234567890"),
             ([], b"le"),
             ([1, 2, 3], b"li1ei2ei3ee"),
             ([[b"Alice", b"Bob"], [2, 3]], b"ll5:Alice3:Bobeli2ei3eee"),
             ({}, b"de"),
             ({b"age": 25, b"eyes": b"blue"}, b"d3:agei25e4:eyes4:bluee"),
+            ({u"age": 25, u"eyes": u"blue"}, b"d3:agei25e4:eyes4:bluee"),
             ({b"spam.mp3": {b"author": b"Alice", b"length": 100000}}, b"d8:spam.mp3d6:author5:Alice6:lengthi100000eee"),
+            ([True, False], b"li1ei0ee"),
+            (MockBenObj(2), b"12:MockBenObj-2"),
         )
         for obj, result in testcases:
+            print(obj)
             self.failUnlessEqual(bencode(obj), result)
 
     def test_bwrite_stream(self):

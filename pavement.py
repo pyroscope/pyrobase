@@ -132,7 +132,8 @@ def dist_docs():
 @requires("nose>=1.0", "coverage>=3.4")
 def test():
     "run unit tests"
-    environment.call_task("nosetests")
+    sh("coverage run $(which nosetests)")
+    sh('coverage report --include="*pyrobase*" --omit="*test*"')
 
 
 @task
@@ -141,6 +142,7 @@ def coverage():
     coverage_index = path("build/coverage/index.html")
     coverage_index.remove()
     sh("paver test")
+    sh('coverage html --include="*pyrobase*" --omit="*test*" -d build/coverage/')
     coverage_index.exists() and webbrowser.open(coverage_index)
 
 

@@ -116,7 +116,7 @@ class Decoder(object):
 
 
 class Encoder(object):
-    """ Encode a given object to a string or stream.
+    """ Encode a given object to an array of bytestrings.
     """
 
     def __init__(self, char_encoding='utf-8'):
@@ -130,10 +130,10 @@ class Encoder(object):
         """
         if isinstance(obj, bool):
             if obj:
-                self.result.extend(b"i1e")
+                self.result.extend([b"i1e"])
             else:
-                self.result.extend(b"i0e")
-        if isinstance(obj, integer_types):
+                self.result.extend([b"i0e"])
+        elif isinstance(obj, integer_types):
             self.result.extend([b"i", text_type(obj).encode('utf-8'), b"e"])
         elif isinstance(obj, string_types):
             if isinstance(obj, text_type):
