@@ -30,7 +30,10 @@ class InterpolationTemplate(object):
     def __init__(self, fmt, mapping=None):
         """ Create template ADT wrapper object.
         """
-        self.fmt = unicode(fmt)
+        try:
+            self.fmt = unicode(fmt, 'utf-8')
+        except (TypeError, UnicodeDecodeError):
+            self.fmt = fmt
         self.mapping = mapping or (lambda _: _)
         self.__engine__ = "interpolation"
         self.__file__ = None
