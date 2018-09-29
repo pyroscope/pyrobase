@@ -129,7 +129,7 @@ class SSHTransport(object):
 
         self.cmd.extend(["--", ssh_netloc])
         #self.cmd.extend(["/bin/nc", "-U", "--", clean_path])
-        self.cmd.extend(["socat", "STDIO", "UNIX-CONNECT:" + clean_path])
+        self.cmd.extend(["socat", "-t5", "STDIO", "UNIX-CONNECT:" + clean_path])
 
 
     def send(self, data):
