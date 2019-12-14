@@ -2,11 +2,14 @@
 Paver==1.2.4
 Tempita==0.5.2
 epydoc==3.0.1
-bpython==0.16
-pylint==1.8.1
-tox==2.9.1
-mock==2.0.0
+bpython==0.18
+pylint==1.9.5
+tox==3.14.2
+mock==3.0.5
 twine==1.9.1
 
-# need old version for Python 2.x
+# need old versions for Python 2.x
 more-itertools==5.0.0
+
+# optional runtime deps
+imgurpython==1.1.7
