@@ -7,3 +7,6 @@ pylint==1.8.1
 tox==2.9.1
 mock==2.0.0
 twine==1.9.1
+
+# need old version for Python 2.x
+more-itertools==5.0.0
