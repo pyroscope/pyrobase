@@ -133,6 +133,9 @@ def to_unicode(text):
     try:
         # Try UTF-8 first
         return text.decode("UTF-8")
+    except AttributeError:  # non-text types have no "decode()"
+        # Try to return a text representation
+        return (unicode if PY2 else str)(text)
     except UnicodeError:
         try:
             # Then Windows Latin-1
