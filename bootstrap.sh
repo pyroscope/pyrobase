@@ -41,13 +41,14 @@ export DEBEMAIL=$DEBEMAIL
 EOF
 . $pyvenv/bin/activate
 
-for basepkg in pip setuptools wheel; do
-    pip install -U $basepkg
+pip install -U pip
+python -c "import distribute" 2>/dev/null || python -m pip uninstall -y distribute
+for basepkg in setuptools==39.2.0 wheel; do
+    python -m pip install -U $basepkg
 done
-python -c "import distribute" 2>/dev/null || pip uninstall -y distribute
 
-pip install -r requirements-dev.txt
+python -m pip install -r requirements-dev.txt
 paver generate_setup
 paver minilib
 paver bootstrap
-pip install -e .
+python -m pip install -e .
