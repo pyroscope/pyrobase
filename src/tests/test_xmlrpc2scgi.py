@@ -117,11 +117,16 @@ class HelperTest(unittest.TestCase):
 
     def test_encode_payload(self):
         testcases = (
-            (b"", b"24:%s," % b'\0'.join([b"CONTENT_LENGTH", b"0", b"SCGI", b"1", b""])),
-            (b"*"*10, b"25:%s," % b'\0'.join([b"CONTENT_LENGTH", b"10", b"SCGI", b"1", b""]) + b"*"*10),
+            (b"", None, b"24:%s," % b'\0'.join([b"CONTENT_LENGTH", b"0", b"SCGI", b"1", b""])),
+            (b"*"*10, None, b"25:%s," % b'\0'.join([b"CONTENT_LENGTH", b"10", b"SCGI", b"1", b""]) + b"*"*10),
+            (
+                b"",
+                [('a', 'b')],
+                b"28:%s," % b'\0'.join([b"CONTENT_LENGTH", b"0", b"SCGI", b"1", b"a", b"b", b""])
+            ),
         )
-        for data, expected in testcases:
-            self.assertEqual(xmlrpc2scgi._encode_payload(data), expected)
+        for data, headers, expected in testcases:
+            self.assertEqual(xmlrpc2scgi._encode_payload(data, headers=headers), expected)
 
     def test_parse_headers(self):
         testcases = (
@@ -131,11 +136,17 @@ class HelperTest(unittest.TestCase):
         for data, expected in testcases:
             self.assertEqual(xmlrpc2scgi._parse_headers(data), expected)
 
+        bad_headers = b"a: b\nc; d\n\n"
+        self.assertRaises(xmlrpc2scgi.SCGIException, xmlrpc2scgi._parse_headers, bad_headers)
+
     def test_parse_response(self):
         data = b"Content-Length: 10\r\n\r\n" + b"*"*10
         payload, headers = xmlrpc2scgi._parse_response(data)
         self.assertEqual(payload, b"*"*10)
         self.assertEqual(headers, {"Content-Length": "10"})
+
+        bad_data = b"Content-Length: 10\n\n" + b"*"*10
+        self.assertRaises(xmlrpc2scgi.SCGIException, xmlrpc2scgi._parse_response, bad_data)
 
 
 class SCGIRequestTest(unittest.TestCase):

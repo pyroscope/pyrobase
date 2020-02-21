@@ -115,7 +115,7 @@ class Decoder(object):
 
 
 class Encoder(object):
-    """ Encode a given object to a string or stream.
+    """ Encode a given object to an array of bytestrings.
     """
 
     def __init__(self, char_encoding='utf-8'):

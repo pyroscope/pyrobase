@@ -64,6 +64,7 @@ class DecoderTest(unittest.TestCase):
             b"l0:",
             b"d0:0:",
             b"d0:",
+            b"10:45646",
         )
         for testcase in testcases:
             #print testcase
@@ -79,6 +80,7 @@ class DecoderTest(unittest.TestCase):
             (b"0:", ''),
             (b"3:abc", "abc"),
             (b"10:1234567890", "1234567890"),
+            (u"10:1234567890", "1234567890"),
             (b"le", []),
             (b"l0:0:0:e", ['', '', '']),
             (b"li1ei2ei3ee", [1, 2, 3]),
