@@ -128,26 +128,22 @@ def dist_docs():
 # Testing
 #
 
-COVERAGE_ARGS = '--include="*pyrobase*" --omit="*test*,.pyvenv/*,.venv/*"'
+PYTEST_CMD = 'pytest -c ./setup.cfg src/tests'
 
 @task
-@requires("nose>=1.0", "coverage>=3.4")
 def test():
     "run unit tests"
-    sh("coverage run $(command which nosetests)")
-    sh('coverage report ' + COVERAGE_ARGS)
+    sh(PYTEST_CMD)
 
 
 @task
-def coverage():
+def cov():
     "generate coverage report and show in browser"
     coverage_index = path("build/coverage/index.html")
     coverage_index.remove()
-    sh("paver test")
-    sh('coverage html -d build/coverage/ ' + COVERAGE_ARGS)
+    sh(PYTEST_CMD)
     coverage_index.exists() and webbrowser.open(
         'file://{}'.format(os.path.abspath(coverage_index)))
-
 
 @task
 @needs("setuptools.command.build")
