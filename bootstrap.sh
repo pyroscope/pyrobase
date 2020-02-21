@@ -32,7 +32,9 @@ test -z "$PYTHON" -a -x "/usr/bin/python" && PYTHON="/usr/bin/python"
 test -z "$PYTHON" && PYTHON="python3"
 
 pyvenv=.venv/$(basename $(builtin cd $(dirname "$SCRIPTNAME") && pwd))
-test -x $pyvenv/bin/python || ${PYTHON} -m venv $pyvenv
+if ! test -x $pyvenv/bin/python; then
+    ${PYTHON} -m venv $pyvenv || ${VIRTUALENV:-/usr/bin/virtualenv} $pyvenv
+fi
 grep DEBFULLNAME $pyvenv/bin/activate >/dev/null 2>&1 || cat >>$pyvenv/bin/activate <<EOF
 export DEBFULLNAME=$DEBFULLNAME
 export DEBEMAIL=$DEBEMAIL
