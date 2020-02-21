@@ -67,7 +67,7 @@ class DecoderTest(unittest.TestCase):
         )
         for testcase in testcases:
             #print testcase
-            self.failUnlessRaises(BencodeError, bdecode, testcase)
+            self.assertRaises(BencodeError, bdecode, testcase)
 
 
     def test_values(self):
@@ -90,17 +90,17 @@ class DecoderTest(unittest.TestCase):
                 {"spam.mp3": {"author": "Alice", "length": 100000}}),
         )
         for bytestring, result in testcases:
-            self.failUnlessEqual(bdecode(bytestring), result)
+            self.assertEqual(bdecode(bytestring), result)
 
     def test_encoding(self):
-        self.failUnlessEqual(bdecode(b"l1:\x801:\x81e", "cp1252"), [u"\u20ac", b"\x81"])
+        self.assertEqual(bdecode(b"l1:\x801:\x81e", "cp1252"), [u"\u20ac", b"\x81"])
 
     def test_bread_stream(self):
-        self.failUnlessEqual(bread(BytesIO(b"de")), {})
+        self.assertEqual(bread(BytesIO(b"de")), {})
 
     def test_bread_file(self):
         with mockedopen(fakefiles={"empty_dict": "de"}, mode='b'):
-            self.failUnlessEqual(bread("empty_dict"), {})
+            self.assertEqual(bread("empty_dict"), {})
 
 
 class EncoderTest(unittest.TestCase):
@@ -123,17 +123,17 @@ class EncoderTest(unittest.TestCase):
             ({1: b"foo"}, b"d1:13:fooe"),
         )
         for obj, result in testcases:
-            self.failUnlessEqual(bencode(obj), result)
+            self.assertEqual(bencode(obj), result)
 
     def test_bwrite_stream(self):
         data = BytesIO()
         bwrite(data, {})
-        self.failUnlessEqual(data.getvalue(), b"de")
+        self.assertEqual(data.getvalue(), b"de")
 
     def test_bwrite_file(self):
         with mockedopen(mode='b') as files:
             bwrite("data", {})
-            self.failUnlessEqual(files["data"], b"de")
+            self.assertEqual(files["data"], b"de")
 
 
 if __name__ == "__main__":

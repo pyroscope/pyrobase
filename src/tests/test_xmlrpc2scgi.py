@@ -60,7 +60,7 @@ class MockedTransport(object):
 class TransportTest(unittest.TestCase):
 
     def test_bad_url(self):
-        self.failUnlessRaises(URLError, xmlrpc2scgi.transport_from_url, "xxxx:///")
+        self.assertRaises(URLError, xmlrpc2scgi.transport_from_url, "xxxx:///")
 
     def test_local_transports(self):
         testcases = (
@@ -74,10 +74,10 @@ class TransportTest(unittest.TestCase):
         )
         for url, family in testcases:
             result = xmlrpc2scgi.transport_from_url(url)
-            self.failUnlessEqual("%s[%d]" % (url, result.sock_args[0]),
+            self.assertEqual("%s[%d]" % (url, result.sock_args[0]),
                                  "%s[%d]" % (url, family))
             if family == socket.AF_UNIX:
-                self.failUnless(result.sock_addr.endswith("/tmp/socket"))
+                self.assertTrue(result.sock_addr.endswith("/tmp/socket"))
 
     def test_ssh_transports(self):
         testcases = (
@@ -89,11 +89,11 @@ class TransportTest(unittest.TestCase):
             xmlrpc2scgi.transport_from_url(url)
 
         # Port handling
-        self.failIf("-p" in xmlrpc2scgi.transport_from_url("scgi+ssh://localhost/foo").cmd)
-        self.failUnless("-p" in xmlrpc2scgi.transport_from_url("scgi+ssh://localhost:5000/foo").cmd)
+        self.assertFalse("-p" in xmlrpc2scgi.transport_from_url("scgi+ssh://localhost/foo").cmd)
+        self.assertTrue("-p" in xmlrpc2scgi.transport_from_url("scgi+ssh://localhost:5000/foo").cmd)
 
         # Errors
-        self.failUnlessRaises(URLError, xmlrpc2scgi.transport_from_url, "scgi+ssh://localhost:5000")
+        self.assertRaises(URLError, xmlrpc2scgi.transport_from_url, "scgi+ssh://localhost:5000")
 
 
 class HelperTest(unittest.TestCase):
@@ -105,7 +105,7 @@ class HelperTest(unittest.TestCase):
             #(u"\u20ac", "3:\xe2\x82\xac,"),
         )
         for data, expected in testcases:
-            self.failUnlessEqual(xmlrpc2scgi._encode_netstring(data), expected)
+            self.assertEqual(xmlrpc2scgi._encode_netstring(data), expected)
 
     def test_encode_headers(self):
         testcases = (
@@ -113,7 +113,7 @@ class HelperTest(unittest.TestCase):
             ((("a", "b"),), b"a\0b\0"),
         )
         for data, expected in testcases:
-            self.failUnlessEqual(xmlrpc2scgi._encode_headers(data), expected)
+            self.assertEqual(xmlrpc2scgi._encode_headers(data), expected)
 
     def test_encode_payload(self):
         testcases = (
@@ -121,7 +121,7 @@ class HelperTest(unittest.TestCase):
             (b"*"*10, b"25:%s," % b'\0'.join([b"CONTENT_LENGTH", b"10", b"SCGI", b"1", b""]) + b"*"*10),
         )
         for data, expected in testcases:
-            self.failUnlessEqual(xmlrpc2scgi._encode_payload(data), expected)
+            self.assertEqual(xmlrpc2scgi._encode_payload(data), expected)
 
     def test_parse_headers(self):
         testcases = (
@@ -129,13 +129,13 @@ class HelperTest(unittest.TestCase):
             (b"a: b\nc: d\n\n", dict(a="b", c="d")),
         )
         for data, expected in testcases:
-            self.failUnlessEqual(xmlrpc2scgi._parse_headers(data), expected)
+            self.assertEqual(xmlrpc2scgi._parse_headers(data), expected)
 
     def test_parse_response(self):
         data = b"Content-Length: 10\r\n\r\n" + b"*"*10
         payload, headers = xmlrpc2scgi._parse_response(data)
-        self.failUnlessEqual(payload, b"*"*10)
-        self.failUnlessEqual(headers, {"Content-Length": "10"})
+        self.assertEqual(payload, b"*"*10)
+        self.assertEqual(headers, {"Content-Length": "10"})
 
 
 class SCGIRequestTest(unittest.TestCase):
@@ -143,31 +143,31 @@ class SCGIRequestTest(unittest.TestCase):
     def test_init(self):
         r1 = xmlrpc2scgi.SCGIRequest("example.com:5000")
         r2 = xmlrpc2scgi.SCGIRequest(r1.transport)
-        self.failUnless(r1.transport is r2.transport)
+        self.assertTrue(r1.transport is r2.transport)
 
     def test_send(self):
         req = xmlrpc2scgi.SCGIRequest(MockedTransport(b"foo"))
         resp = req.send(b"bar")
         bad = "Bad response %r" % resp
-        self.failUnless(resp.startswith(b"<?xml "), bad)
-        self.failUnless(b"bar" in resp, bad)
-        self.failIf(req.latency == 0, "Latency cannot be zero")
+        self.assertTrue(resp.startswith(b"<?xml "), bad)
+        self.assertTrue(b"bar" in resp, bad)
+        self.assertFalse(req.latency == 0, "Latency cannot be zero")
 
     def test_scgi_request(self):
         resp = xmlrpc2scgi.scgi_request(MockedTransport("foo"), "bar", "baz")
         bad = "Bad response %s" % resp
         if six.PY2:
-            self.failUnless(resp.startswith('"26:CONTENT_LENGTH'), bad)
+            self.assertTrue(resp.startswith('"26:CONTENT_LENGTH'), bad)
         else:
-            self.failUnless(resp.startswith('b"26:CONTENT_LENGTH'), bad)
-        self.failUnless("<methodName>bar</methodName>" in resp, bad)
-        self.failUnless("<value><string>baz</string></value>" in resp, bad)
+            self.assertTrue(resp.startswith('b"26:CONTENT_LENGTH'), bad)
+        self.assertTrue("<methodName>bar</methodName>" in resp, bad)
+        self.assertTrue("<value><string>baz</string></value>" in resp, bad)
 
     def test_scgi_request_raw(self):
         resp = xmlrpc2scgi.scgi_request(MockedTransport("foo"), "bar", "baz", deserialize=False)
         bad = "Bad response %s" % resp
-        self.failUnless(resp.startswith("<?xml version="), bad)
-        self.failUnless("<![CDATA[" in resp, bad)
+        self.assertTrue(resp.startswith("<?xml version="), bad)
+        self.assertTrue("<![CDATA[" in resp, bad)
 
 
 if __name__ == "__main__":
