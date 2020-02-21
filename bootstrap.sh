@@ -25,13 +25,15 @@ export DEBFULLNAME=pyroscope
 export DEBEMAIL=pyroscope.project@gmail.com
 
 deactivate 2>/dev/null || true
+test -z "$PYTHON" -a -x "/usr/bin/python3.8" && PYTHON="/usr/bin/python3.8"
+test -z "$PYTHON" -a -x "/usr/bin/python3" && PYTHON="/usr/bin/python3"
 test -z "$PYTHON" -a -x "/usr/bin/python2" && PYTHON="/usr/bin/python2"
 test -z "$PYTHON" -a -x "/usr/bin/python" && PYTHON="/usr/bin/python"
-test -z "$PYTHON" && PYTHON="python"
+test -z "$PYTHON" && PYTHON="python3"
 
-pyvenv=.pyvenv/$(basename $(builtin cd $(dirname "$SCRIPTNAME") && pwd))
-test -x $pyvenv/bin/python || ${VIRTUALENV:-/usr/bin/virtualenv} $pyvenv
-grep DEBFULLNAME bin/activate >/dev/null || cat >>bin/activate <<EOF
+pyvenv=.venv/$(basename $(builtin cd $(dirname "$SCRIPTNAME") && pwd))
+test -x $pyvenv/bin/python || ${PYTHON} -m venv $pyvenv
+grep DEBFULLNAME $pyvenv/bin/activate >/dev/null 2>&1 || cat >>$pyvenv/bin/activate <<EOF
 export DEBFULLNAME=$DEBFULLNAME
 export DEBEMAIL=$DEBEMAIL
 EOF
