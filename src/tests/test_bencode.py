@@ -105,6 +105,15 @@ class DecoderTest(unittest.TestCase):
             self.assertEqual(bread("empty_dict"), {})
 
 
+@pytest.mark.parametrize('obj', [
+    object,
+    object(),
+])
+def test_encoding_errors(obj):
+    with pytest.raises(BencodeError):
+        bencode(obj)
+
+
 class DunderBencode(object):
     def __init__(self, num):
         self.num = num
@@ -132,7 +141,6 @@ class DunderBencode(object):
      b"d8:spam.mp3d6:author5:Alice6:lengthi100000eee"),
     ([True, False], b"li1ei0ee"),
     (DunderBencode(2), b"15:DunderBencode-2"),
-    #(object(), "")
 ])
 def test_encoding_values(obj, result):
     assert bencode(obj) == result
