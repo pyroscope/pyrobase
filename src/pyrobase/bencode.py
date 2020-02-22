@@ -128,7 +128,7 @@ class Encoder(object):
         """ Add the given object to the result.
         """
         if isinstance(obj, bool):
-            self.result.extend(b"i1e" if obj else b"i0e")
+            self.result.append(b"i1e" if obj else b"i0e")
         elif isinstance(obj, integer_types):
             self.result.extend([b"i", text_type(obj).encode(self.char_encoding), b"e"])
         elif isinstance(obj, string_types):
