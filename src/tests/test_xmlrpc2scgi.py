@@ -30,11 +30,9 @@ except ImportError:
     from urllib2 import URLError
 
 import six
+import pytest
 
 from pyrobase.io import xmlrpc2scgi
-
-log = logging.getLogger(__name__)
-log.trace("module loaded")
 
 
 class MockedTransport(object):
@@ -182,4 +180,4 @@ class SCGIRequestTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    pytest.main([__file__])

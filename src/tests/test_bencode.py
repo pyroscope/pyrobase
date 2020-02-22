@@ -32,9 +32,6 @@ import pytest
 from pyrobase.testing import mockedopen
 from pyrobase.bencode import * #@UnusedWildImport
 
-log = logging.getLogger(__name__)
-log.trace("module loaded")
-
 
 class DecoderTest(unittest.TestCase):
 
@@ -154,4 +151,4 @@ class EncoderTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    pytest.main([__file__])

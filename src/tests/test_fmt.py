@@ -22,10 +22,9 @@ import time
 import logging
 import unittest
 
-from pyrobase import fmt
+import pytest
 
-log = logging.getLogger(__name__)
-log.trace("module loaded")
+from pyrobase import fmt
 
 
 class FmtTest(unittest.TestCase):
@@ -184,4 +183,4 @@ class FmtTest(unittest.TestCase):
             assert result == expected
 
 if __name__ == "__main__":
-    unittest.main()
+    pytest.main([__file__])

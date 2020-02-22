@@ -23,9 +23,6 @@ import unittest
 
 from pyrobase import iterutil
 
-log = logging.getLogger(__name__)
-log.trace("module loaded")
-
 
 class IterUtilTest(unittest.TestCase):
 

@@ -20,6 +20,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import unittest
 
+import pytest
+
 from pyrobase import osutil
 
 
@@ -43,4 +45,4 @@ class OsUtilTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    pytest.main([__file__])

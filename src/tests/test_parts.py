@@ -21,10 +21,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 import logging
 import unittest
 
-from pyrobase import parts
+import pytest
 
-log = logging.getLogger(__name__)
-log.trace("module loaded")
+from pyrobase import parts
 
 
 class BunchTest(unittest.TestCase):
@@ -53,4 +52,4 @@ class BunchTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    pytest.main([__file__])
