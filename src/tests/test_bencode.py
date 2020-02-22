@@ -27,6 +27,8 @@ try:
 except ImportError:
     from StringIO import StringIO as BytesIO
 
+import pytest
+
 from pyrobase.testing import mockedopen
 from pyrobase.bencode import * #@UnusedWildImport
 
@@ -105,27 +107,40 @@ class DecoderTest(unittest.TestCase):
             self.assertEqual(bread("empty_dict"), {})
 
 
-class EncoderTest(unittest.TestCase):
+class DunderBencode(object):
+    def __init__(self, num):
+        self.num = num
 
-    def test_values(self):
-        testcases = (
-            (4, b"i4e"),
-            (0, b"i0e"),
-            (-10, b"i-10e"),
-            (12345678901234567890, b"i12345678901234567890e"),
-            (b"", b"0:"),
-            (b"abc", b"3:abc"),
-            (b"1234567890", b"10:1234567890"),
-            ([], b"le"),
-            ([1, 2, 3], b"li1ei2ei3ee"),
-            ([[b"Alice", b"Bob"], [2, 3]], b"ll5:Alice3:Bobeli2ei3eee"),
-            ({}, b"de"),
-            ({b"age": 25, b"eyes": b"blue"}, b"d3:agei25e4:eyes4:bluee"),
-            ({b"spam.mp3": {b"author": b"Alice", b"length": 100000}}, b"d8:spam.mp3d6:author5:Alice6:lengthi100000eee"),
-            ({1: b"foo"}, b"d1:13:fooe"),
-        )
-        for obj, result in testcases:
-            self.assertEqual(bencode(obj), result)
+    def __bencode__(self):
+        return "DunderBencode-{}".format(self.num)
+
+@pytest.mark.parametrize('obj, result', [
+    (4, b"i4e"),
+    (0, b"i0e"),
+    (-10, b"i-10e"),
+    (12345678901234567890, b"i12345678901234567890e"),
+    (b"", b"0:"),
+    (b"abc", b"3:abc"),
+    (u"abc", b"3:abc"),
+    (b"1234567890", b"10:1234567890"),
+    ([], b"le"),
+    ([1, 2, 3], b"li1ei2ei3ee"),
+    ([[b"Alice", b"Bob"], [2, 3]], b"ll5:Alice3:Bobeli2ei3eee"),
+    ({}, b"de"),
+    ({b"age": 25, b"eyes": b"blue"}, b"d3:agei25e4:eyes4:bluee"),
+    ({u"age": 25, u"eyes": u"blue"}, b"d3:agei25e4:eyes4:bluee"),
+    ({1: b"foo"}, b"d1:13:fooe"),
+    ({b"spam.mp3": {b"author": b"Alice", b"length": 100000}},
+      b"d8:spam.mp3d6:author5:Alice6:lengthi100000eee"),
+    ([True, False], b"li1ei0ee"),
+    (DunderBencode(2), b"15:DunderBencode-2"),
+    #(object(), "")
+])
+def test_encoding_values(obj, result):
+    assert bencode(obj) == result
+
+
+class EncoderTest(unittest.TestCase):
 
     def test_bwrite_stream(self):
         data = BytesIO()
