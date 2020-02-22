@@ -128,7 +128,7 @@ def dist_docs():
 # Testing
 #
 
-PYTEST_CMD = 'pytest -c ./setup.cfg src/tests'
+PYTEST_CMD = 'pytest'
 
 @task
 def test():
