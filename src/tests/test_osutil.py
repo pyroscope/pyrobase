@@ -1,3 +1,4 @@
+# pylint: disable=missing-docstring, bad-whitespace
 """ OS Helper tests.
 
     Copyright (c) 2018 The PyroScope Project <pyroscope.project@gmail.com>

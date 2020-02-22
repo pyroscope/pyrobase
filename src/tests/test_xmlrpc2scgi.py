@@ -1,3 +1,5 @@
+# pylint: disable=missing-docstring, too-few-public-methods
+# pylint: disable=protected-access
 """ SCGI tests.
 
     List of test cases taken from original BitTorrent code by Bram Cohen.
@@ -21,7 +23,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import time
 import socket
-import logging
 import unittest
 
 try:
@@ -73,7 +74,7 @@ class TransportTest(unittest.TestCase):
         for url, family in testcases:
             result = xmlrpc2scgi.transport_from_url(url)
             self.assertEqual("%s[%d]" % (url, result.sock_args[0]),
-                                 "%s[%d]" % (url, family))
+                             "%s[%d]" % (url, family))
             if family == socket.AF_UNIX:
                 self.assertTrue(result.sock_addr.endswith("/tmp/socket"))
 
@@ -150,9 +151,9 @@ class HelperTest(unittest.TestCase):
 class SCGIRequestTest(unittest.TestCase):
 
     def test_init(self):
-        r1 = xmlrpc2scgi.SCGIRequest("example.com:5000")
-        r2 = xmlrpc2scgi.SCGIRequest(r1.transport)
-        self.assertTrue(r1.transport is r2.transport)
+        req1 = xmlrpc2scgi.SCGIRequest("example.com:5000")
+        req2 = xmlrpc2scgi.SCGIRequest(req1.transport)
+        self.assertTrue(req1.transport is req2.transport)
 
     def test_send(self):
         req = xmlrpc2scgi.SCGIRequest(MockedTransport(b"foo"))

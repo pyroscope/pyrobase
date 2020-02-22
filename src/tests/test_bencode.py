@@ -1,3 +1,5 @@
+# pylint: disable=missing-docstring, wildcard-import, unused-wildcard-import
+# pylint: disable=protected-access, too-few-public-methods
 """ Bencode tests.
 
     List of test cases taken from original BitTorrent code by Bram Cohen.
@@ -19,7 +21,6 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 from __future__ import absolute_import, print_function  #, unicode_literals
 
-import logging
 import unittest
 
 try:
@@ -88,7 +89,7 @@ class DecoderTest(unittest.TestCase):
             (b"de", {}),
             (b"d3:agei25e4:eyes4:bluee", {"age": 25, "eyes": "blue"}),
             (b"d8:spam.mp3d6:author5:Alice6:lengthi100000eee",
-                {"spam.mp3": {"author": "Alice", "length": 100000}}),
+             {"spam.mp3": {"author": "Alice", "length": 100000}}),
         )
         for bytestring, result in testcases:
             self.assertEqual(bdecode(bytestring), result)
@@ -128,7 +129,7 @@ class DunderBencode(object):
     ({u"age": 25, u"eyes": u"blue"}, b"d3:agei25e4:eyes4:bluee"),
     ({1: b"foo"}, b"d1:13:fooe"),
     ({b"spam.mp3": {b"author": b"Alice", b"length": 100000}},
-      b"d8:spam.mp3d6:author5:Alice6:lengthi100000eee"),
+     b"d8:spam.mp3d6:author5:Alice6:lengthi100000eee"),
     ([True, False], b"li1ei0ee"),
     (DunderBencode(2), b"15:DunderBencode-2"),
     #(object(), "")

@@ -1,3 +1,4 @@
+# pylint: disable=missing-docstring, no-self-use, bad-whitespace
 """ Formatting Helper tests.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
@@ -19,7 +20,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import time
-import logging
 import unittest
 
 import pytest

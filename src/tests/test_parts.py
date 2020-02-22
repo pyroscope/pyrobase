@@ -1,3 +1,4 @@
+# pylint: disable=missing-docstring
 """ Data Types tests.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
@@ -18,7 +19,6 @@
 """
 from __future__ import absolute_import, print_function, unicode_literals
 
-import logging
 import unittest
 
 import pytest
@@ -29,26 +29,22 @@ from pyrobase import parts
 class BunchTest(unittest.TestCase):
 
     def test_janus(self):
-        b = parts.Bunch()
-        b.a = 1
-        b["z"] = 2
-        assert b["a"] == 1
-        assert b.z == 2
+        bunch = parts.Bunch()
+        bunch.a = 1
+        bunch["z"] = 2
+        assert bunch["a"] == 1
+        assert bunch.z == 2
 
     def test_repr(self):
-        b = repr(parts.Bunch(a=1, z=2))
-        assert b.startswith("Bunch(")
-        assert "a=" in b
-        assert b.index("a=") < b.index("z=")
+        bunch = repr(parts.Bunch(a=1, z=2))
+        assert bunch.startswith("Bunch(")
+        assert "a=" in bunch
+        assert bunch.index("a=") < bunch.index("z=")
 
     def test_exc(self):
-        b = parts.Bunch()
-        try:
-            b.not_there
-        except AttributeError as exc:
-            assert "not_there" in str(exc)
-        else:
-            assert False, "Expected an exception"
+        bunch = parts.Bunch()
+        with pytest.raises(AttributeError):
+            return bunch.not_there
 
 
 if __name__ == "__main__":

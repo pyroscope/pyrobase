@@ -1,3 +1,4 @@
+# pylint: disable=missing-docstring, bad-whitespace
 """ Iterator Helper tests.
 
     Copyright (c) 2011 The PyroScope Project <pyroscope.project@gmail.com>
@@ -18,7 +19,6 @@
 """
 from __future__ import absolute_import, print_function, unicode_literals
 
-import logging
 import unittest
 
 from pyrobase import iterutil
