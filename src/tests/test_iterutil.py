@@ -19,24 +19,26 @@
 """
 from __future__ import absolute_import, print_function, unicode_literals
 
-import unittest
+import pytest
 
 from pyrobase import iterutil
 
 
-class IterUtilTest(unittest.TestCase):
+def yielding():
+    yield 1
+    yield (2, "3")
 
-    def test_flatten(self):
-        def yielding():
-            yield 1
-            yield (2, "3")
 
-        cases = [
-            ([],                []),
-            ((1, "2"),          [1, "2"]),
-            (yielding(),        [1, 2, "3"]),
-            ((1, ["2", [], 3]), [1, "2", 3]),
-        ]
-        for val, expected in cases:
-            result = list(iterutil.flatten(val))
-            assert result == expected
+@pytest.mark.parametrize('val, expected', [
+    ([],                []),
+    ((1, "2"),          [1, "2"]),
+    (yielding(),        [1, 2, "3"]),
+    ((1, ["2", [], 3]), [1, "2", 3]),
+])
+def test_iterutil_flatten(val, expected):
+    result = list(iterutil.flatten(val))
+    assert result == expected
+
+
+if __name__ == "__main__":
+    pytest.main([__file__])

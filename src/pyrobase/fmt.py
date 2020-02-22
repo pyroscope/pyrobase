@@ -90,6 +90,9 @@ def human_duration(time1, time2=None, precision=0, short=False):
         ("+now" if short else " from now") if time2 else ""
     )
     duration = abs(duration)
+    if not duration and time2 and precision < 2:
+        return " now " if short and precision == 1 else "right now"
+
     parts = [
         ("weeks", duration // (7*86400)),
         ("days", duration // 86400 % 7),

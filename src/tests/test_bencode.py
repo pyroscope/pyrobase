@@ -34,84 +34,70 @@ from pyrobase.testing import mockedopen
 from pyrobase.bencode import * #@UnusedWildImport
 
 
-class DecoderTest(unittest.TestCase):
-
-    def test_errors(self):
-        testcases = (
-            b"",
-            b"0:0:",
-            b"ie",
-            b"i341foo382e",
-            #"i-0e",
-            b"i123",
-            b"i6easd",
-            b"35208734823ljdahflajhdf",
-            b"2:abfdjslhfld",
-            #"02:xy",
-            b"l",
-            b"l0:",
-            b"leanfdldjfh",
-            b"relwjhrlewjh",
-            b"d",
-            b"defoobar",
-            b"d3:fooe",
-            #"di1e0:e",
-            #"d1:b0:1:a0:e",
-            #"d1:a0:1:a0:e",
-            #"i03e",
-            #"l01:ae",
-            b"9999:x",
-            b"l0:",
-            b"d0:0:",
-            b"d0:",
-            b"10:45646",
-        )
-        for testcase in testcases:
-            #print testcase
-            self.assertRaises(BencodeError, bdecode, testcase)
-
-
-    def test_values(self):
-        testcases = (
-            (b"i4e", 4),
-            (b"i0e", 0),
-            (b"i123456789e", 123456789),
-            (b"i-10e", -10),
-            (b"0:", ''),
-            (b"3:abc", "abc"),
-            (b"10:1234567890", "1234567890"),
-            (u"10:1234567890", "1234567890"),
-            (b"le", []),
-            (b"l0:0:0:e", ['', '', '']),
-            (b"li1ei2ei3ee", [1, 2, 3]),
-            (b"l3:asd2:xye", ["asd", "xy"]),
-            (b"ll5:Alice3:Bobeli2ei3eee", [["Alice", "Bob"], [2, 3]]),
-            (b"de", {}),
-            (b"d3:agei25e4:eyes4:bluee", {"age": 25, "eyes": "blue"}),
-            (b"d8:spam.mp3d6:author5:Alice6:lengthi100000eee",
-             {"spam.mp3": {"author": "Alice", "length": 100000}}),
-        )
-        for bytestring, result in testcases:
-            self.assertEqual(bdecode(bytestring), result)
-
-    def test_encoding(self):
-        self.assertEqual(bdecode(b"l1:\x801:\x81e", "cp1252"), [u"\u20ac", b"\x81"])
-
-    def test_bread_stream(self):
-        self.assertEqual(bread(BytesIO(b"de")), {})
-
-    def test_bread_file(self):
-        with mockedopen(fakefiles={"empty_dict": "de"}, mode='b'):
-            self.assertEqual(bread("empty_dict"), {})
-
-
-@pytest.mark.parametrize('obj', [
-    object,
-    object(),
+@pytest.mark.parametrize('val', [
+    b"",
+    b"0:0:",
+    b"ie",
+    b"i341foo382e",
+    #"i-0e",
+    b"i123",
+    b"i6easd",
+    b"35208734823ljdahflajhdf",
+    b"2:abfdjslhfld",
+    #"02:xy",
+    b"l",
+    b"l0:",
+    b"leanfdldjfh",
+    b"relwjhrlewjh",
+    b"d",
+    b"defoobar",
+    b"d3:fooe",
+    #"di1e0:e",
+    #"d1:b0:1:a0:e",
+    #"d1:a0:1:a0:e",
+    #"i03e",
+    #"l01:ae",
+    b"9999:x",
+    b"l0:",
+    b"d0:0:",
+    b"d0:",
+    b"10:45646",
 ])
-def test_encoding_errors(obj):
+def test_bdecode_errors(val):
     with pytest.raises(BencodeError):
-        bencode(obj)
+        bdecode(val)
+
+@pytest.mark.parametrize('val, expected', [
+    (b"i4e", 4),
+    (b"i0e", 0),
+    (b"i123456789e", 123456789),
+    (b"i-10e", -10),
+    (b"0:", ''),
+    (b"3:abc", "abc"),
+    (b"10:1234567890", "1234567890"),
+    (u"10:1234567890", "1234567890"),
+    (b"le", []),
+    (b"l0:0:0:e", ['', '', '']),
+    (b"li1ei2ei3ee", [1, 2, 3]),
+    (b"l3:asd2:xye", ["asd", "xy"]),
+    (b"ll5:Alice3:Bobeli2ei3eee", [["Alice", "Bob"], [2, 3]]),
+    (b"de", {}),
+    (b"d3:agei25e4:eyes4:bluee", {"age": 25, "eyes": "blue"}),
+    (b"d8:spam.mp3d6:author5:Alice6:lengthi100000eee",
+     {"spam.mp3": {"author": "Alice", "length": 100000}}),
+])
+def test_bdecode_values(val, expected):
+    assert bdecode(val) == expected
+
+def test_bdecode_encoding():
+    assert bdecode(b"l1:\x801:\x81e", "cp1252") == [u"\u20ac", b"\x81"]
+
+def test_bdecode_bread_stream():
+    assert bread(BytesIO(b"de")) == {}
+
+def test_bdecode_bread_file():
+    with mockedopen(fakefiles={"empty_dict": "de"}, mode='b'):
+        assert bread("empty_dict") == {}
 
 
 class DunderBencode(object):
@@ -121,7 +107,15 @@ class DunderBencode(object):
     def __bencode__(self):
         return "DunderBencode-{}".format(self.num)
 
-@pytest.mark.parametrize('obj, result', [
+@pytest.mark.parametrize('val', [
+    object,
+    object(),
+])
+def test_bencode_errors(val):
+    with pytest.raises(BencodeError):
+        bencode(val)
+
+@pytest.mark.parametrize('val, expected', [
     (4, b"i4e"),
     (0, b"i0e"),
     (-10, b"i-10e"),
@@ -142,21 +136,18 @@ class DunderBencode(object):
     ([True, False], b"li1ei0ee"),
     (DunderBencode(2), b"15:DunderBencode-2"),
 ])
-def test_encoding_values(obj, result):
-    assert bencode(obj) == result
+def test_bencode_values(val, expected):
+    assert bencode(val) == expected
 
+def test_bencode_bwrite_stream():
+    data = BytesIO()
+    bwrite(data, {})
+    assert  data.getvalue() == b"de"
 
-class EncoderTest(unittest.TestCase):
-
-    def test_bwrite_stream(self):
-        data = BytesIO()
-        bwrite(data, {})
-        self.assertEqual(data.getvalue(), b"de")
-
-    def test_bwrite_file(self):
-        with mockedopen(mode='b') as files:
-            bwrite("data", {})
-            self.assertEqual(files["data"], b"de")
+def test_bencode_bwrite_file():
+    with mockedopen(mode='b') as files:
+        bwrite("data", {})
+        assert files["data"] == b"de"
 
 
 if __name__ == "__main__":

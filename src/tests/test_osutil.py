@@ -19,30 +19,25 @@
 """
 from __future__ import absolute_import, print_function, unicode_literals
 
-import unittest
-
 import pytest
 
 from pyrobase import osutil
 
 
-class OsUtilTest(unittest.TestCase):
-
-    def test_shell_escape(self):
-        cases = [
-            ("abc",         "abc"),
-            ("123",         "123"),
-            ("safe-._,+",   "safe-._,+"),
-            ("!bang",       "'!bang'"),
-            ("d\"q",        "'d\"q'"),
-            ("s'q",         r"'s'\''q'"),
-            ("abc",        "abc"),
-            ("!bang",      "'!bang'"),
-            ("\xA0",       "'\xA0'"),
-        ]
-        for val, expected in cases:
-            result = osutil.shell_escape(val)
-            assert result == expected
+@pytest.mark.parametrize('val, expected', [
+    ("abc",         "abc"),
+    ("123",         "123"),
+    ("safe-._,+",   "safe-._,+"),
+    ("!bang",       "'!bang'"),
+    ("d\"q",        "'d\"q'"),
+    ("s'q",         r"'s'\''q'"),
+    ("abc",        "abc"),
+    ("!bang",      "'!bang'"),
+    ("\xA0",       "'\xA0'"),
+])
+def test_osutil_shell_escape(val, expected):
+    result = osutil.shell_escape(val)
+    assert result == expected
 
 
 if __name__ == "__main__":

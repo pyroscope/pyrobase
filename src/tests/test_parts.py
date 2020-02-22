@@ -19,32 +19,30 @@
 """
 from __future__ import absolute_import, print_function, unicode_literals
 
-import unittest
-
 import pytest
 
 from pyrobase import parts
 
 
-class BunchTest(unittest.TestCase):
+def test_bunch_janus():
+    bunch = parts.Bunch()
+    bunch.a = 1
+    bunch["z"] = 2
 
-    def test_janus(self):
-        bunch = parts.Bunch()
-        bunch.a = 1
-        bunch["z"] = 2
-        assert bunch["a"] == 1
-        assert bunch.z == 2
+    assert bunch["a"] == 1
+    assert bunch.z == 2
 
-    def test_repr(self):
-        bunch = repr(parts.Bunch(a=1, z=2))
-        assert bunch.startswith("Bunch(")
-        assert "a=" in bunch
-        assert bunch.index("a=") < bunch.index("z=")
+def test_bunch_repr():
+    bunch = repr(parts.Bunch(a=1, z=2))
 
-    def test_exc(self):
-        bunch = parts.Bunch()
-        with pytest.raises(AttributeError):
-            return bunch.not_there
+    assert bunch.startswith("Bunch(")
+    assert "a=" in bunch
+    assert bunch.index("a=") < bunch.index("z=")
+
+def test_bunch_no_attr():
+    bunch = parts.Bunch()
+    with pytest.raises(AttributeError):
+        return bunch.not_there
 
 
 if __name__ == "__main__":
