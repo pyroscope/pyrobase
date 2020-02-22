@@ -128,7 +128,7 @@ def dist_docs():
 # Testing
 #
 
-PYTEST_CMD = 'pytest'
+PYTEST_CMD = 'python -m pytest'
 
 @task
 def test():
