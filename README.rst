@@ -37,17 +37,20 @@ Installing into a virtualenv is recommended.
 Usage
 -----
 
-See the project's ``pavement.py`` and unit tests, and for a full API
-documentation go to http://packages.python.org/pyrobase/.
+See the project's unit tests for examples,
+and for a full API documentation visit the `API Reference`_.
 
-The `Contributing Guidelines`_ tell you how to report probelems and
+The `Contributing Guidelines`_ tell you how to report problems and
 request new features, and what to do as a developer or documentation author.
+
+.. _`API Reference`: https://pyrobase.readthedocs.io/en/latest/api.html
 
 
 Acknowledgements
 ----------------
 
 * Repository hosting @ GitHub.
+* Repository hosting by https://readthedocs.io/.
 * Paver @ http://paver.github.com/paver/.
 * https://github.com/Quantique for the inspiration on the scgi+ssh transport.
 
