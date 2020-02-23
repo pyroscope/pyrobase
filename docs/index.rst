@@ -13,7 +13,7 @@ can be applied to any project. That includes some additional tasks
 for the Paver build tool, an improved xmlrpc2scgi module, unit test
 helpers, and generic base modules for various domains.
 
-|Travis CI|  |Issues|  |PyPI|
+|Travis CI|  |RTD|  |Issues|  |PyPI|
 
 
 .. rubric:: Project Links
@@ -25,8 +25,11 @@ helpers, and generic base modules for various domains.
 
 .. include:: include-contacts.rst
 
+.. |RTD| image:: https://readthedocs.org/projects/pyrobase/badge/?version=latest
+   :target: https://pyrobase.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
 .. |Travis CI| image:: https://travis-ci.org/pyroscope/pyrobase.svg?branch=master
-    :target: https://travis-ci.org/pyroscope/pyrobase
+   :target: https://travis-ci.org/pyroscope/pyrobase
 .. |Issues| image:: https://img.shields.io/github/issues/pyroscope/pyrobase.svg
    :target: https://github.com/pyroscope/pyrobase/issues
 .. |PyPI| image:: https://img.shields.io/pypi/v/pyrobase.svg

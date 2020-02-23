@@ -1,7 +1,7 @@
 pyrobase
 ========
 
-|Travis CI|  |Issues|  |PyPI|
+|Travis CI|  |RTD|  |Issues|  |PyPI|
 
 *General Python Helpers and Utilities.*
 
@@ -55,8 +55,11 @@ Acknowledgements
 
 .. _`Contributing Guidelines`: https://github.com/pyroscope/pyrobase/blob/master/CONTRIBUTING.rst
 
+.. |RTD| image:: https://readthedocs.org/projects/pyrobase/badge/?version=latest
+   :target: https://pyrobase.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
 .. |Travis CI| image:: https://travis-ci.org/pyroscope/pyrobase.svg?branch=master
-    :target: https://travis-ci.org/pyroscope/pyrobase
+   :target: https://travis-ci.org/pyroscope/pyrobase
 .. |Issues| image:: https://img.shields.io/github/issues/pyroscope/pyrobase.svg
    :target: https://github.com/pyroscope/pyrobase/issues
 .. |PyPI| image:: https://img.shields.io/pypi/v/pyrobase.svg
