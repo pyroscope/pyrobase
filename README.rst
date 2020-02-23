@@ -50,7 +50,7 @@ Acknowledgements
 ----------------
 
 * Repository hosting @ GitHub.
-* Repository hosting by https://readthedocs.io/.
+* Documentation hosting by https://readthedocs.io/.
 * Paver @ http://paver.github.com/paver/.
 * https://github.com/Quantique for the inspiration on the scgi+ssh transport.
 
