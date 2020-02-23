@@ -154,50 +154,5 @@ def test_to_console(val, expected):
     assert result == expected
 
 
-@pytest.mark.parametrize('val, expected', [
-    # string prefixs are intentionally left out of the expect,
-    # to match str in both python 2 and 3
-    (
-        {'one': b'two', u'three': 45},
-        {'one': 'two', 'three': 45},
-    ),
-    (
-        {'one': b'two', u'three': [b'four', {u'five': b'six'}]},
-        {'one': 'two', 'three': ['four', {'five': 'six'}]}
-    )
-])
-def test_fmt_convert_strings_in_iter(val, expected):
-    result = fmt.convert_strings_in_iter(val)
-    assert result == expected
-
-
-@pytest.mark.parametrize('val, expected', [
-    (b"test", u"test"),
-    (u"test", u"test"),
-    (600, u"600"),
-    ([[1]], u"[1]"),
-    ([[1],[2]], u"[1]\n[2]"),
-    (['test','test2'], u"test\ntest2"),
-    ([['test']], u"['test']")
-])
-def test_fmt_xmlrpc_result_to_string(val, expected):
-    result = fmt.xmlrpc_result_to_string(val)
-    assert result == expected
-
-
-@pytest.mark.parametrize('val, expected', [
-    (b"test", u"'test'"),
-    (u"test", u"'test'"),
-    (600, u"600"),
-    ([[1]], u"[[1]]"),
-    ([[1],[2]], u"[[1], [2]]"),
-    ([['test'],['test2']], u"[['test'], ['test2']]"),
-    ([['test']], u"[['test']]"),
-])
-def test_fmt_xmlrpc_result_to_repr(val, expected):
-    result = fmt.xmlrpc_result_to_string(val, pretty=True)
-    assert result == expected
-
-
 if __name__ == "__main__":
     pytest.main([__file__])

@@ -197,33 +197,3 @@ def to_console(text):
 
     # Convert other stuff into an UTF-8 bytestring
     return text_type(text).encode("utf8")
-
-
-def convert_strings_in_iter(obj):
-    # Unicode will get pformatted with a 'u' prefix on 2
-    if PY2 and isinstance(obj, unicode):
-        obj = obj.encode("utf8")
-    # Bytes will get pformatted with a 'b' prefix on 3
-    elif not PY2 and isinstance(obj, binary_type):
-        obj = obj.decode()
-    elif isinstance(obj, dict):
-        for k, v in obj.items():
-            obj[convert_strings_in_iter(k)] = convert_strings_in_iter(v)
-    elif isinstance(obj, list):
-        for k, v in enumerate(obj):
-            obj[k] = convert_strings_in_iter(v)
-    return obj
-
-
-def xmlrpc_result_to_string(result, pretty=False):
-    result = convert_strings_in_iter(result)
-
-    if pretty:
-        # Pretty-print if requested, or it's a collection and not a scalar
-        return pformat(result)
-    elif isinstance(result, string_types) or isinstance(result, binary_type):
-        return to_unicode(result)
-    elif hasattr(result, "__iter__"):
-        return '\n'.join(i if isinstance(i, string_types) else pformat(i) for i in result)
-    else:
-        return repr(result)
