@@ -36,6 +36,8 @@ from pyrobase.bencode import * #@UnusedWildImport
 
 @pytest.mark.parametrize('val', [
     b"",
+    b"i",
+    b"di1",
     b"0:0:",
     b"ie",
     b"i341foo382e",
@@ -57,6 +59,8 @@ from pyrobase.bencode import * #@UnusedWildImport
     #"d1:a0:1:a0:e",
     #"i03e",
     #"l01:ae",
+    b"1",
+    b"1:",
     b"9999:x",
     b"l0:",
     b"d0:0:",
@@ -110,6 +114,9 @@ class DunderBencode(object):
 @pytest.mark.parametrize('val', [
     object,
     object(),
+    {None: None},
+    {object: None},
+    {object(): None},
 ])
 def test_bencode_errors(val):
     with pytest.raises(BencodeError):
