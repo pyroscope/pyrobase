@@ -67,7 +67,7 @@ def lint(ctx, output='', rcfile='', with_report=False):
     }
 
     lint_build_dir = Path("build/lint")
-    lint_build_dir.exists() or lint_build_dir.makedirs()  # pylint: disable=expression-not-assigned
+    lint_build_dir.mkdir(parents=True, exist_ok=True)
 
     argv = []
     if not rcfile and Path("pylint.cfg").exists():
