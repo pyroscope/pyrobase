@@ -77,7 +77,7 @@ def lint(ctx, output='', rcfile='', with_report=False):
     if not with_report:
         argv += ["-rn"]
     argv += [
-        "--import-graph", str((lint_build_dir / "imports.dot").resolve()),
+        "--import-graph", str((lint_build_dir / "imports.dot").absolute()),
     ]
     argv += [PROJECT_NAME]
 
