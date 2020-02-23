@@ -19,11 +19,12 @@ helpers, and generic base modules for various domains.
 All modules have unit tests (currently pyrobase.paver is an exception),
 and the goal is to reach >80% coverage.
 
-Links:
+.. rubric:: Project Links
 
--  `PyPI <http://pypi.python.org/pypi/pyrobase/>`_
--  `API docs <http://packages.python.org/pyrobase/>`_
--  `OpenHub <https://www.openhub.net/p/pyrobase>`_
+:GitHub:    https://github.com/pyroscope/pyrobase#readme
+:PyPI:      http://pypi.python.org/pypi/pyrobase/
+:API docs:  https://pyrobase.readthedocs.io/en/latest/api.html
+:OpenHub:   https://www.openhub.net/p/pyrobase
 
 
 Installation
