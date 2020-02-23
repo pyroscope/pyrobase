@@ -5,6 +5,7 @@ language: python
 python:
   - "2.7"
   - "3.5"
+  - "3.6"
   - "3.8"
 
 matrix:
@@ -17,11 +18,8 @@ matrix:
 # - sudo apt-get install -qq python-apt python-pycurl
 
 install:
-  - pip install -U pip no-manylinux1
-  - pip install -U setuptools wheel
+  - pip install -U pip setuptools wheel
   - pip install -r requirements-dev.txt
-  - paver bootstrap
-  - pip install -e .
 
 script:
-  - paver test
+  - invoke test
