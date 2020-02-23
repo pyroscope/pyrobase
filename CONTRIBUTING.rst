@@ -29,8 +29,8 @@ First, check out the source::
 You are strongly encouraged to build within a virtualenv, call the provided
 script ``bootstrap.sh`` to create one in your working directory::
 
-    ./bootstrap.sh
-    . bin/activate
+    PYTHON=python3 ./bootstrap.sh
+    . .env
 
 
 Common Development Tasks
@@ -42,6 +42,7 @@ Here are some common project tasks::
     invoke docs -o  # Build documentation and show in browser
     paver lint -m  # Check code quality
     paver cov  # Run unittests & show coverage report
+    tox  # Run unittests in various test environments (multiple Python versions)
 
 
 .. _`Mastering Issues`: https://guides.github.com/features/issues/

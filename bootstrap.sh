@@ -1,8 +1,11 @@
-# This script has to be sourced in a shell and is thus NOT executable.
+#! /usr/bin/env bash
 #
 # Set up project
 #
-# Copyright (c) 2010-2017 The PyroScope Project <pyroscope.project@gmail.com>
+# This script has to be sourced in a shell,
+# or called followed by an extra venv activation step.
+#
+# Copyright (c) 2010-2020 The PyroScope Project <pyroscope.project@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,6 +33,8 @@ test -z "$PYTHON" -a -x "/usr/bin/python3" && PYTHON="/usr/bin/python3"
 test -z "$PYTHON" -a -x "/usr/bin/python2" && PYTHON="/usr/bin/python2"
 test -z "$PYTHON" -a -x "/usr/bin/python" && PYTHON="/usr/bin/python"
 test -z "$PYTHON" && PYTHON="python3"
+
+echo "*** Using $($PYTHON -V)"
 
 pyvenv=.venv/$(basename $(builtin cd $(dirname "$SCRIPTNAME") && pwd))
 if ! test -x $pyvenv/bin/python; then

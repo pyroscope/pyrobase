@@ -15,12 +15,16 @@ zipp==1.2.0; python_version < "3.6"
 more-itertools==5.0.0; python_version < "3"
 more-itertools==8.2.0; python_version >= "3.5"
 
+invoke==1.4.1
 tox==3.14.5
 pytest-cov==2.8.1
 mock==3.0.5
 
-# runtime deps
-Tempita==0.5.2
+Sphinx==1.7.5
+sphinx-rtd-theme==0.4.0
+sphinx-autobuild==0.7.1
+-r docs/requirements.txt
 
-# optional runtime deps
-imgurpython==1.1.7
+# Runtime
+-r requirements.txt
+-e .
