@@ -9,12 +9,33 @@ import time
 import shutil
 import subprocess
 import webbrowser
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 from invoke import task
 
 
 PROJECT_NAME = 'pyrobase'
+PYTEST_CMD = 'python -m pytest'
 SPHINX_AUTOBUILD_PORT = int(os.environ.get('SPHINX_AUTOBUILD_PORT', '8340'))
+
+
+@task
+def test(ctx):
+    """Run unit tests."""
+    ctx.run(PYTEST_CMD)
+
+
+@task
+def cov(ctx):
+    """Run unit tests & show coverage report"""
+    coverage_index = Path("build/coverage/index.html")
+    coverage_index.unlink()
+    ctx.run(PYTEST_CMD)
+    coverage_index.exists() and webbrowser.open(
+        'file://{}'.format(os.path.abspath(coverage_index)))
 
 
 def watchdog_pid(ctx):

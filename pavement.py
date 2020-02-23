@@ -107,43 +107,9 @@ def bootstrap():
     "initialize project"
 
 
-@task
-@needs("docs")
-def dist_docs():
-    "create a documentation bundle"
-    dist_dir = path("dist")
-    docs_package = path("%s/%s-%s-docs.zip" % (dist_dir.abspath(), options.setup.name, options.setup.version))
-
-    dist_dir.exists() or dist_dir.makedirs()
-    docs_package.exists() and docs_package.remove()
-
-    sh(r'cd build/apidocs && zip -qr9 %s .' % (docs_package,))
-
-    print('')
-    print("Upload @ http://pypi.python.org/pypi?:action=pkg_edit&name=%s" % ( options.setup.name,))
-    print(docs_package)
-
-
 #
 # Testing
 #
-
-PYTEST_CMD = 'python -m pytest'
-
-@task
-def test():
-    "run unit tests"
-    sh(PYTEST_CMD)
-
-
-@task
-def cov():
-    "generate coverage report and show in browser"
-    coverage_index = path("build/coverage/index.html")
-    coverage_index.remove()
-    sh(PYTEST_CMD)
-    coverage_index.exists() and webbrowser.open(
-        'file://{}'.format(os.path.abspath(coverage_index)))
 
 @task
 @needs("setuptools.command.build")

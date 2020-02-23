@@ -38,11 +38,11 @@ Common Development Tasks
 
 Here are some common project tasks::
 
-    pytest  # Run unittests
-    invoke docs -o  # Build documentation and show in browser
-    paver lint -m  # Check code quality
-    paver cov  # Run unittests & show coverage report
-    tox  # Run unittests in various test environments (multiple Python versions)
+    pytest          # Run unittests
+    inv docs -o     # Build documentation and show in browser
+    paver lint -m   # Check code quality
+    inv cov         # Run unittests & show coverage report
+    tox             # Run unittests in various test environments (multiple Python versions)
 
 
 .. _`Mastering Issues`: https://guides.github.com/features/issues/
