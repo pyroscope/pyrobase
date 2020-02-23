@@ -40,7 +40,7 @@ Here are some common project tasks::
 
     pytest          # Run unit tests
     inv docs -o     # Build documentation and show in browser
-    paver lint -m   # Check code quality
+    inv lint        # Check code quality
     inv cov         # Run unit tests & show coverage report
     tox             # Run unit tests in various test environments (multiple Python versions)
 
