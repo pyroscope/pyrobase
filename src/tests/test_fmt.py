@@ -20,6 +20,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import time
+import codecs
 
 import pytest
 
@@ -54,10 +55,17 @@ def test_fmt_iso_datetime():
     assert any("1970-01-01 " in i for i in result)
 
 
-def test_fmt_iso_datetime_optional():
+def test_fmt_iso_datetime_now():
+    result = fmt.iso_datetime()
+    assert result.startswith('20')
+
+
+def test_fmt_iso_datetime_optional_value():
     result = (fmt.iso_datetime(86400), fmt.iso_datetime_optional(86400))
     assert result[0] == result[1]
 
+
+def test_fmt_iso_datetime_optional_missing():
     result = [fmt.iso_datetime_optional(i) for i in (0, "", None, False)]
     assert all(i == "never" for i in result)
 
@@ -96,6 +104,7 @@ def test_fmt_human_duration(val, expected):
     (u"", u""),
     (False, False),
     (None, None),
+    (True, "True"),
     (b"\xc3\xaa", u"\xea"),
     (b"\x80", u"\u20ac"),
     (b"\x81", b"\x81"),
@@ -115,11 +124,14 @@ def test_fmt_to_unicode(val, expected):
     (False, False),
     (None, None),
     (u"\xea", b"\xc3\xaa",),
+    (b"\x80", b"\xe2\x82\xac"),
     (u"\u20ac", b"\xe2\x82\xac"),
     (b"\xc3\xaa", b"\xc3\xaa"),
-    (b"\xfe\xff\x00\x20", b" "),
-    (b"\xff\xfe\x20\x00", b" "),
-    (b"\xef\xbb\xbf\x20", b" "),
+    (codecs.BOM_UTF16_LE + b"\1", b"\1"),
+    (codecs.BOM_UTF16_BE + b"\1", b"\1"),
+    (codecs.BOM_UTF16_LE + b"\x20\x00", b" "),
+    (codecs.BOM_UTF16_BE + b"\x00\x20", b" "),
+    (codecs.BOM_UTF8 + b"\x20", b" "),
     #(b"\xc3\xc3\x81".decode('cp1252'), "\xc3\xc3\x81"),
 ])
 def test_fmt_to_utf8(val, expected):

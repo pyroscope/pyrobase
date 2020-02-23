@@ -67,9 +67,7 @@ def iso_datetime_optional(timestamp):
         @param timestamp: UNIX epoch value.
         @return: Timestamp formatted as "YYYY-mm-dd HH:MM:SS", or "never" for false values.
     """
-    if timestamp:
-        return iso_datetime(timestamp)
-    return "never"
+    return iso_datetime(timestamp) if timestamp else "never"
 
 
 def human_duration(time1, time2=None, precision=0, short=False):
@@ -185,9 +183,9 @@ def to_utf8(text):
                     try:
                         line.decode(encoding).encode("utf8")
                     except UnicodeDecodeError:
-                        log.warn("Cannot transcode the following into UTF8 cause of %s: %r" % (exc, line))
+                        log.warning("Cannot transcode the following into UTF8 cause of %s: %r" % (exc, line))
                         break
-                return text # Use as-is and hope the best
+                return text  # Use as-is and hope the best
 
 
 def to_console(text):
@@ -197,7 +195,7 @@ def to_console(text):
         # For now, leave byte strings as-is (ignoring possible display problems)
         return text
 
-    # Convert other stuff into an UTF-8 string
+    # Convert other stuff into an UTF-8 bytestring
     return text_type(text).encode("utf8")
 
 
